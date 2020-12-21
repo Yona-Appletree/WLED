@@ -1,3 +1,15 @@
+
+<div class="colors">
+	<div *ngFor="let stop of palette.stops; let index=index"
+	     [style.background]="stop.color?.cssColor"
+	     class="colors-x-color"
+	     [class.colors-x-color-is-empty]="stop.color === null"
+	     [class.colors-x-color-is-selected]="index === selectedIndex"
+	     (click)="selectedIndex = index"
+	></div>
+</div>
+
+
 <wled-color-picker [color]="palette.stops[selectedIndex]?.color?.cssColor || '#fff'"
                    (colorChange)="updateSelectedColor($event)"
                    #colorPicker
@@ -8,15 +20,5 @@
 	     [style.background]="preset?.cssColor"
 	     class="presets-x-preset"
 	     (click)="colorPicker.useColor(preset)"
-	></div>
-</div>
-
-<div class="colors">
-	<div *ngFor="let stop of palette.stops; let index=index"
-	     [style.background]="stop.color?.cssColor"
-	     class="colors-x-color"
-	     [class.colors-x-color-is-empty]="stop.color === null"
-	     [class.colors-x-color-is-selected]="index === selectedIndex"
-	     (click)="selectedIndex = index"
 	></div>
 </div>

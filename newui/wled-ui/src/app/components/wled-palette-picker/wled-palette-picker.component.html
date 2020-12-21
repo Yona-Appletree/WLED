@@ -3,7 +3,7 @@
 	     style="padding-bottom: 32px"
 	     class="palGroups-x-group"
 	>
-		<h3 class="palGroups-x-group-x-name">{{ palGroup.name }}</h3>
+		<h4 class="palGroups-x-group-x-name">{{ palGroup.name }}</h4>
 
 		<div *ngFor="let pal of palGroup.palettes; let index=index; trackBy: palIdFor"
 		     [style.background]="pal.cssGradient"

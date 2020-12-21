@@ -1,24 +1,63 @@
-<div style="position: fixed; top: 0; left: 0; width: 100%; z-index: 0;">
-<img [src]="liveApi.currentLineImageUrl"
-	     style="width: 100%; height: 16px; image-rendering: pixelated;"
+<div style="min-height: 256px; width: 320px; display: grid; grid-template-columns: 1fr; grid-template-rows: 16px 1fr; justify-items: stretch;">
+	<img [src]="liveApi.currentLineImageUrl"
+	     style="height: 16px;"
 	/>
+
 	<img [src]="liveApi.historyImageUrl"
-	     style="width: 100%; height: 512px; image-rendering: pixelated;"
+	     style="align-self: stretch"
+	     #historyImage
 	/>
 </div>
 
-<div style="position: absolute; top: 32px; width: 100%;">
-	<div style="margin: auto; background: rgba(0,0,0,.75); width: 400px;">
-		<div *ngFor="let segment of wledApi.currentStatus?.segments; trackBy: segmentIdFor">
-			<wled-palette-editor [colors]="segment.selectedPalette?.pickerColors || [ null ]"
-			                     (paletteChange)="segment.updateManualPaletteColors($event.wledColors)"
-			                     *ngIf="segment.selectedPalette?.pickerColors?.length"
-			></wled-palette-editor>
 
-			<wled-palette-picker [paletteGroups]="segment.paletteGroups"
-			                     [selectedPalette]="segment.selectedPalette"
-			                     (selectedPaletteChange)="segment.selectPalette($event)"
-			></wled-palette-picker>
+<div>
+	<div style="margin: auto; background: rgba(0,0,0,.65); width: 400px;">
+		<div *ngFor="let segment of wledApi.currentStatus?.segments; trackBy: segmentIdFor"
+		     style="display: grid; grid-template-columns: 1fr; grid-row-gap: 8px; justify-content: center;"
+		>
+			<div style="align-self: stretch;"
+			     [style.background]="segment.selectedPalette.cssGradient"
+			>
+				<h2 class="heading-2 text-onlight"
+				    style="text-align: center;">Effect Color</h2>
+			</div>
+
+
+			<wled-tab-bar>
+				<wled-tab-bar-tab #presetTab
+				                  (clicked)="segment.selectBestPresetPalette()"
+				                  [selected]="segment.isPresetPaletteSelected"
+				>
+					Preset Palette
+				</wled-tab-bar-tab>
+
+				<wled-tab-bar-tab #customTab
+				                  (clicked)="segment.selectBestCustomPalette()"
+				                  [selected]="segment.isCustomPaletteSelected"
+				>
+					Custom Palette
+				</wled-tab-bar-tab>
+			</wled-tab-bar>
+
+			<ng-container *ngIf="customTab.selected">
+				<wled-palette-picker [paletteGroups]="segment.customizablePaletteGroups"
+				                     [selectedPalette]="segment.selectedPalette"
+				                     (selectedPaletteChange)="segment.selectPalette($event)"
+				></wled-palette-picker>
+
+				<wled-palette-editor [colors]="segment.selectedPalette?.pickerColors || [ null ]"
+				                     (paletteChange)="segment.updateManualPaletteColors($event.wledColors)"
+				                     [enabled]="(segment.selectedPalette?.pickerColors?.length || 0) > 0"
+				></wled-palette-editor>
+			</ng-container>
+
+			<ng-container *ngIf="presetTab.selected">
+				<wled-palette-picker [paletteGroups]="segment.presetPaletteGroups"
+				                     [selectedPalette]="segment.selectedPalette"
+				                     (selectedPaletteChange)="segment.selectPalette($event)"
+				></wled-palette-picker>
+			</ng-container>
 		</div>
 	</div>
 </div>
+

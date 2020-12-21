@@ -23,7 +23,8 @@ export class UiPalette {
 	}
 
 	static fromColors(
-		input: Array<UiColorCompatible | null | undefined> | null | undefined
+		input: Array<UiColorCompatible | null | undefined> | null | undefined,
+		defualtColor = UiColor.BLACK
 	) {
 		const colors = (input || [])
 			.map(it => UiColor.from(it));
@@ -31,7 +32,7 @@ export class UiPalette {
 		return new UiPalette(
 			colors.map((color, index) => new UiPaletteStop(
 				uint8((index / (colors.length - 1)) * 255),
-				color || UiColor.BLACK
+				color || defualtColor
 			))
 		)
 	}
@@ -93,6 +94,7 @@ export class UiPaletteStop {
 
 export class UiColor {
 	static BLACK = new UiColor([0, 0, 0]);
+	static WHITE = new UiColor([255, 255, 255]);
 
 	static fromHex(color: number) {
 		return new UiColor([

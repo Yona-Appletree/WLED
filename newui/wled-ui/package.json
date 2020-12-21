@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-all": "ng serve --disableHostCheck true --host 0.0.0.0",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -23,6 +24,7 @@
     "@popperjs/core": "^2.6.0",
     "@types/chroma-js": "^2.1.2",
     "chroma-js": "^2.1.0",
+    "resize-observer-polyfill": "^1.5.1",
     "rxjs": "~6.6.0",
     "sequency": "^0.19.2",
     "tslib": "^2.0.0",

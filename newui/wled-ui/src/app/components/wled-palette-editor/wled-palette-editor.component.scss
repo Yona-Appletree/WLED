@@ -3,8 +3,16 @@
   grid-template-columns: 1fr;
   grid-row-gap: 8px;
 
+  transition-duration: .25s;
+
   > * {
     justify-self: center;
+  }
+
+  &.is-disabled {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: .75;
   }
 }
 
@@ -12,6 +20,9 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  justify-content: center;
+
+  max-width: 320px;
 
   .presets-x-preset {
     background-color: rgb(255, 0, 0);

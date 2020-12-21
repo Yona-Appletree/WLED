@@ -12,7 +12,7 @@ export class WledColorPickerComponent implements OnInit, AfterViewInit, OnDestro
 	private colorPicker: iro.ColorPicker| null = null;
 
 	@Input()
-	defaultColor = "#FFFFFF";
+	defaultColor = "#000";
 
 	@Input()
 	debounce = true;
@@ -78,7 +78,7 @@ export class WledColorPickerComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	private _debounceTimeout: number | null = null;
-	private _debounceMs = 500;
+	private _debounceMs = 100;
 
 	private emitColorDebounced() {
 		if (this._debounceTimeout !== null) {

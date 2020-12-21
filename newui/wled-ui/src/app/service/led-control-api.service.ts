@@ -9,7 +9,10 @@ import {
   PartyColors_p, RainbowColors_p, RainbowStripeColors_p
 } from "../util/data/fastled-palettes.data";
 import { wledGradientPaletteNames, wledGradientPalettes } from "../util/data/wled-gradient-palettes.data";
+import { Dictionary } from "../util/dictionary.util";
+import { buildInfoMap } from "../util/info-map.util";
 import { uint8 } from "../util/number.util";
+import { timeoutPromise } from "../util/promise.util";
 import { ConfigService } from "./config.service";
 import {
   UiColor, UiColorCompatible,
@@ -80,6 +83,9 @@ export class LedControlApiService {
       });
 
     await this.currentRequestPromise;
+
+    // Wait a little longer so we don't slam the server with requests. It likes to crash.
+    await timeoutPromise(100);
 
     return this._currentResponse;
   }
@@ -217,8 +223,9 @@ export class UiStripSegment implements IUiStripSegment {
   get isSelected() { return this.apiModel.sel; }
 
   // Emulates void WS2812FX::handle_palette(void)
+
   @Cached()
-  get paletteGroups(): UiWledPaletteGroup[] {
+  get paletteGroups() {
     const nonZeroPalettes = [
       // 0: Automatic... replaced later in this function to better represent the actual value
       new UiWledPalette(0, "Automatic", new UiPalette([])),
@@ -280,13 +287,13 @@ export class UiStripSegment implements IUiStripSegment {
       new UiWledPalette(9, "Ocean colors", OceanColors_p),
 
       // 10: Forest colors
-      new UiWledPalette(0, "Forest colors", ForestColors_p),
+      new UiWledPalette(10, "Forest colors", ForestColors_p),
 
       // 11: Rainbow colors
-      new UiWledPalette(1, "Rainbow colors", RainbowColors_p),
+      new UiWledPalette(11, "Rainbow colors", RainbowColors_p),
 
       // 12: Rainbow stripe colors
-      new UiWledPalette(2, "Rainbow stripe colors", RainbowStripeColors_p),
+      new UiWledPalette(12, "Rainbow stripe colors", RainbowStripeColors_p),
 
       ... wledGradientPalettes.map(
         (it, i) => new UiWledPalette(
@@ -313,70 +320,104 @@ export class UiStripSegment implements IUiStripSegment {
       }
     })();
 
-    const palettes =  [
+    const palettes = [
       new UiWledPalette(
         0,
         `Automatic (${autoPalette.name})`,
         autoPalette?.palette!
       ),
-      ... nonZeroPalettes.slice(1)
+      ...nonZeroPalettes.slice(1)
     ];
 
-    return [
+    return buildInfoMap<
+      "groupId",
+      UiWledPaletteGroupId,
+      UiWledPaletteGroupInfo
+    >(
+      "groupId",
       {
-        name: "Dynamic",
-        palettes: [
-          palettes[0],
-          palettes[1],
-        ]
-      },
+        dynamic: {
+          name: "Dynamic",
+          customizable: false,
+          palettes: [
+            palettes[ 0 ],
+            palettes[ 1 ],
+          ]
+        },
 
-      {
-        name: "User-Defined",
-        palettes: [
-          palettes[2],
-          palettes[3],
-          palettes[4],
-          palettes[5],
-        ]
-      },
+        userDefined: {
+          name: "Custom Palette Styles",
+          customizable: true,
+          palettes: [
+            palettes[ 2 ],
+            palettes[ 3 ],
+            palettes[ 4 ],
+            palettes[ 5 ],
+          ]
+        },
 
-      {
-        name: "Fast LED Palettes",
-        palettes: [
-          palettes[6],
-          palettes[7],
-          palettes[8],
-          palettes[9],
-          palettes[10],
-          palettes[11],
-          palettes[12],
-        ]
-      },
+        fastLed: {
+          name: "Fast LED Palettes",
+          customizable: false,
+          palettes: [
+            palettes[ 6 ],
+            palettes[ 7 ],
+            palettes[ 8 ],
+            palettes[ 9 ],
+            palettes[ 10 ],
+            palettes[ 11 ],
+            palettes[ 12 ],
+          ]
+        },
 
-      {
-        name: "Gradient Palettes",
-        palettes: palettes.slice(13)
-      },
-    ]
+        gradient: {
+          name: "Gradient Palettes",
+          customizable: false,
+          palettes: palettes.slice(13)
+        },
+      }
+    )
   }
 
   @Cached()
   get palettes() {
-    return asSequence(this.paletteGroups)
+    return asSequence(this.paletteGroups.values)
       .flatMap(it => asSequence(it.palettes))
       .toArray();
+  }
+
+  @Cached()
+  get customizablePaletteGroups() {
+    return this.paletteGroups.values.filter(it => it.customizable);
+  }
+
+  @Cached()
+  get presetPaletteGroups() {
+    return this.paletteGroups.values.filter(it => ! it.customizable);
   }
 
   get selectedPalette() {
     return this.palettes[this.paletteIndex];
   }
 
-  delete() {
-    return this.apiService.updateSegment(this.segmentId, { stop: 0 });
+  @Cached()
+  get isCustomPaletteSelected() {
+    return asSequence(this.customizablePaletteGroups)
+      .flatMap(it => asSequence(it.palettes))
+      .contains(this.selectedPalette);
   }
 
-  update(updates: Partial<IUiStripSegment>) {
+  @Cached()
+  get isPresetPaletteSelected() {
+    return asSequence(this.presetPaletteGroups)
+      .flatMap(it => asSequence(it.palettes))
+      .contains(this.selectedPalette);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Mutations
+
+  private update(updates: Partial<IUiStripSegment>) {
     this.apiService.updateSegment(
       this.segmentId,
       {
@@ -400,10 +441,14 @@ export class UiStripSegment implements IUiStripSegment {
     )
   }
 
+  delete() {
+    return this.apiService.updateSegment(this.segmentId, { stop: 0 });
+  }
+
   selectPalette(palette: number | UiWledPalette) {
     const paletteIndex = typeof palette === "number"
                          ? palette
-                         : palette.id;
+                         : palette.wledIndex;
 
     if (paletteIndex != this.paletteIndex) {
       this.update({
@@ -414,22 +459,45 @@ export class UiStripSegment implements IUiStripSegment {
 
   updateManualPaletteColors(colors: UiColorCompatible[]) {
     this.update({
-      manualPaletteColors: colors.map(it => UiColor.from(it)?.wledColor || [])
+      manualPaletteColors: colors.map(it => UiColor.from(it)?.wledColor || [ 0, 0, 0 ])
     })
   }
+
+  selectBestCustomPalette() {
+    const colors = this.manualPaletteColors.map(it => UiColor.from(it));
+
+    const customPalettes = this.paletteGroups.map.userDefined.palettes;
+
+    if (colors[1] || colors[2]) {
+      this.selectPalette(customPalettes[3])
+    } else {
+      this.selectPalette(customPalettes[0])
+    }
+  }
+
+  selectBestPresetPalette() {
+    this.selectPalette(
+      this.paletteGroups.map.dynamic.palettes[0]
+    )
+  }
+
 }
 
-export interface UiWledPaletteGroup {
+export type UiWledPaletteGroupId = "dynamic" | "userDefined" | "fastLed" | "gradient";
+
+export interface UiWledPaletteGroupInfo {
+  groupId: UiWledPaletteGroupId;
   name: string;
   palettes: UiWledPalette[];
+  customizable: boolean;
 }
 
 export class UiWledPalette {
   constructor(
-    public readonly id: number,
+    public readonly wledIndex: number,
     public readonly name: string,
     public readonly palette: UiPalette,
-    public readonly pickerColors: Array<UiColor | null> = []
+    public readonly pickerColors: Array<UiColor | null> | null = null
   ) {}
 
   get cssGradient() { return this.palette.cssGradient }

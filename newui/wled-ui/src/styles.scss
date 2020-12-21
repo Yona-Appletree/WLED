@@ -17,17 +17,26 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
-h1 {
+.text-onlight {
+  text-shadow: 0 0 3px #000, 0 0 3px #000, 0 0 3px #000;
+}
+
+.heading-1 {
   font-size: 40px;
 }
 
-h2 {
+.heading-2 {
   font-size: 32px;
 }
 
-h3 {
+.heading-3 {
   font-size: 24px;
 }
+
+.heading-4 {
+  font-size: 18px;
+}
+
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

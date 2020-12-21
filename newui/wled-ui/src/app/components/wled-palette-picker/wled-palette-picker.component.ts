@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { UiWledPalette, UiWledPaletteGroup } from "../../service/led-control-api.service";
+import { UiWledPalette, UiWledPaletteGroupInfo } from "../../service/led-control-api.service";
 
 @Component({
 	selector: 'wled-palette-picker',
@@ -8,7 +8,7 @@ import { UiWledPalette, UiWledPaletteGroup } from "../../service/led-control-api
 })
 export class WledPalettePickerComponent {
 	@Input()
-	paletteGroups: UiWledPaletteGroup[] = [];
+	paletteGroups: UiWledPaletteGroupInfo[] = [];
 
 	@Input()
 	selectedPalette: UiWledPalette | null = null;
@@ -21,11 +21,11 @@ export class WledPalettePickerComponent {
 		this.selectedPaletteChange.emit(pal);
 	}
 
-	groupIdFor(index: number, group: UiWledPaletteGroup) {
+	groupIdFor(index: number, group: UiWledPaletteGroupInfo) {
 		return group.name;
 	}
 
 	palIdFor(index: number, palette: UiWledPalette) {
-		return palette.id;
+		return palette.wledIndex;
 	}
 }

@@ -62,14 +62,8 @@ export class LiveLedsApiService {
       historyContext.drawImage(
         oldCanvas,
         0,
-        this.historyLineCount - historyCanvas.height
+        0
       );
-    }
-
-
-    for (let i = 0; i<response.leds.length; i++) {
-      currentContext.fillStyle = "#" + response.leds[ i ];
-      currentContext.fillRect(i, 0, 1, 1);
     }
 
     historyContext.drawImage(
@@ -78,6 +72,11 @@ export class LiveLedsApiService {
     );
 
     historyContext.drawImage(currentCanvas, 0, 0);
+
+    for (let i = 0; i<response.leds.length; i++) {
+      currentContext.fillStyle = "#" + response.leds[ i ];
+      currentContext.fillRect(i, 0, 1, 1);
+    }
 
     this._currentLineImageUrl = currentCanvas.toDataURL();
     this._historyImageUrl = historyCanvas.toDataURL();

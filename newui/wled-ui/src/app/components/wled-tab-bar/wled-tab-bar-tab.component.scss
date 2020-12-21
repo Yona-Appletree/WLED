@@ -1,0 +1,24 @@
+:host {
+  background: var(--color-dark1);
+
+  border-radius: 4px;
+
+  padding: 8px;
+
+  cursor: pointer;
+  user-select: none;
+
+  display: grid;
+  justify-items: center;
+  grid-template-columns: 1fr;
+
+  &:hover {
+    background: var(--color-dark3);
+  }
+
+  &.is-selected {
+    background: var(--color-dark2);
+  }
+}
+
+

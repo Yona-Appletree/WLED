@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { WledColorPickerComponent } from "./components/wled-color-picker/wled-color-picker.component";
 import { WledPaletteEditorComponent } from "./components/wled-palette-editor/wled-palette-editor.component";
 import { WledPalettePickerComponent } from "./components/wled-palette-picker/wled-palette-picker.component";
+import { WledTabBarComponent, WledTabBarTabComponent } from "./components/wled-tab-bar/wled-tab-bar.component";
 
 @NgModule({
   declarations: [
@@ -13,6 +14,8 @@ import { WledPalettePickerComponent } from "./components/wled-palette-picker/wle
     WledColorPickerComponent,
     WledPaletteEditorComponent,
     WledPalettePickerComponent,
+    WledTabBarComponent,
+    WledTabBarTabComponent,
   ],
   imports: [
     BrowserModule,
