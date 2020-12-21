@@ -1,0 +1,44 @@
+:host {
+  width: 320px;
+  display: block;
+  margin: auto;
+}
+
+.palGroups {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-row-gap: 8px;
+
+  .palGroups-x-group {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-row-gap: 8px;
+
+    .palGroups-x-group-x-name {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .palGroups-x-group-x-pal {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+
+      height: 32px;
+      text-shadow: #000 0 0 3px;
+      
+      user-select: none;
+      cursor: pointer;
+
+      &:hover {
+        border: 2px solid rgba(255, 255, 255, .5);
+      }
+
+      &.palGroups-x-group-x-pal-is-selected {
+        border: 4px solid rgba(255, 255, 255, 1);
+        font-weight: bold;
+      }
+    }
+  }
+}

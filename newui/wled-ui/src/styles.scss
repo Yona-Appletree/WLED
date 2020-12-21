@@ -1,1 +1,58 @@
-/* You can add global styles to this file, and also import other style files */
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Global App Styles
+html {
+  --color-dark1: #111;
+  --color-dark2: #222;
+  --color-dark3: #333;
+
+  --color-light1: #FFF;
+  --color-light2: #EEE;
+  --color-light3: #DDD;
+}
+
+body {
+  background: var(--color-dark1);
+  color: var(--color-light3);
+
+  font-family: "Open Sans", sans-serif;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+h2 {
+  font-size: 32px;
+}
+
+h3 {
+  font-size: 24px;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// CSS Reset
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}

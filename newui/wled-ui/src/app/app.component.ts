@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { LedControlApiService, UiStripSegment } from "./service/led-control-api.service";
+import { LiveLedsApiService } from "./service/live-leds-api.service";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,15 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'wled-ui';
+  constructor(
+    public wledApi: LedControlApiService,
+    public liveApi: LiveLedsApiService
+  ) {
+    this.wledApi.ensureCurrentResponse();
+    this.liveApi.livePreviewEnabled = true;
+  }
+
+  segmentIdFor(index: number, seg: UiStripSegment) {
+    return seg.segmentId + "";
+  }
 }
