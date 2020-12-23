@@ -24,7 +24,7 @@ import {
   UInt8,
   WledApiFullResponse,
   WLedApiSegmentDefinition,
-  WledEffectMode, WledOptionalRgbColor,
+  WledEffectModeIndex, WledOptionalRgbColor,
 } from "../util/wled.api";
 
 @Injectable({
@@ -306,16 +306,16 @@ export class UiStripSegment implements IUiStripSegment {
 
     const autoPalette = (() => {
       switch (this.effectIndex) {
-        case WledEffectMode.FIRE_2012  : return nonZeroPalettes[35]; // heat palette
-        case WledEffectMode.COLORWAVES : return nonZeroPalettes[26]; // landscape 33
-        case WledEffectMode.FILLNOISE8 : return nonZeroPalettes[ 9]; // ocean colors
-        case WledEffectMode.NOISE16_1  : return nonZeroPalettes[20]; // Drywet
-        case WledEffectMode.NOISE16_2  : return nonZeroPalettes[43]; // Blue cyan yellow
-        case WledEffectMode.NOISE16_3  : return nonZeroPalettes[35]; // heat palette
-        case WledEffectMode.NOISE16_4  : return nonZeroPalettes[26]; // landscape 33
-        case WledEffectMode.GLITTER    : return nonZeroPalettes[11]; // rainbow colors
-        case WledEffectMode.SUNRISE    : return nonZeroPalettes[35]; // heat palette
-        case WledEffectMode.FLOW       : return nonZeroPalettes[ 6]; // party
+        case WledEffectModeIndex.FIRE_2012  : return nonZeroPalettes[35]; // heat palette
+        case WledEffectModeIndex.COLORWAVES : return nonZeroPalettes[26]; // landscape 33
+        case WledEffectModeIndex.FILLNOISE8 : return nonZeroPalettes[ 9]; // ocean colors
+        case WledEffectModeIndex.NOISE16_1  : return nonZeroPalettes[20]; // Drywet
+        case WledEffectModeIndex.NOISE16_2  : return nonZeroPalettes[43]; // Blue cyan yellow
+        case WledEffectModeIndex.NOISE16_3  : return nonZeroPalettes[35]; // heat palette
+        case WledEffectModeIndex.NOISE16_4  : return nonZeroPalettes[26]; // landscape 33
+        case WledEffectModeIndex.GLITTER    : return nonZeroPalettes[11]; // rainbow colors
+        case WledEffectModeIndex.SUNRISE    : return nonZeroPalettes[35]; // heat palette
+        case WledEffectModeIndex.FLOW       : return nonZeroPalettes[ 6]; // party
         default                        : return nonZeroPalettes[14];
       }
     })();

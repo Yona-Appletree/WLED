@@ -144,7 +144,7 @@ export interface WLedApiSegmentDefinition {
 	stop: UInt16,
 
 	// WS2812FX::Segment::mode
-	fx: WledEffectMode,
+	fx: WledEffectModeIndex,
 
 	// WS2812FX::Segment::speed
 	sx: UInt8,
@@ -500,121 +500,236 @@ export function isWledRgbColor(input: unknown): input is WLedRgbColor {
 		&& typeof(input[2]) === "number";
 }
 
-export enum WledEffectMode {
-	STATIC                  =   0, // FX_MODE_STATIC
-	BLINK                   =   1, // FX_MODE_BLINK
-	BREATH                  =   2, // FX_MODE_BREATH
-	COLOR_WIPE              =   3, // FX_MODE_COLOR_WIPE
-	COLOR_WIPE_RANDOM       =   4, // FX_MODE_COLOR_WIPE_RANDOM
-	RANDOM_COLOR            =   5, // FX_MODE_RANDOM_COLOR
-	COLOR_SWEEP             =   6, // FX_MODE_COLOR_SWEEP
-	DYNAMIC                 =   7, // FX_MODE_DYNAMIC
-	RAINBOW                 =   8, // FX_MODE_RAINBOW
-	RAINBOW_CYCLE           =   9, // FX_MODE_RAINBOW_CYCLE
-	SCAN                    =  10, // FX_MODE_SCAN
-	DUAL_SCAN               =  11, // FX_MODE_DUAL_SCAN
-	FADE                    =  12, // FX_MODE_FADE
-	THEATER_CHASE           =  13, // FX_MODE_THEATER_CHASE
-	THEATER_CHASE_RAINBOW   =  14, // FX_MODE_THEATER_CHASE_RAINBOW
-	RUNNING_LIGHTS          =  15, // FX_MODE_RUNNING_LIGHTS
-	SAW                     =  16, // FX_MODE_SAW
-	TWINKLE                 =  17, // FX_MODE_TWINKLE
-	DISSOLVE                =  18, // FX_MODE_DISSOLVE
-	DISSOLVE_RANDOM         =  19, // FX_MODE_DISSOLVE_RANDOM
-	SPARKLE                 =  20, // FX_MODE_SPARKLE
-	FLASH_SPARKLE           =  21, // FX_MODE_FLASH_SPARKLE
-	HYPER_SPARKLE           =  22, // FX_MODE_HYPER_SPARKLE
-	STROBE                  =  23, // FX_MODE_STROBE
-	STROBE_RAINBOW          =  24, // FX_MODE_STROBE_RAINBOW
-	MULTI_STROBE            =  25, // FX_MODE_MULTI_STROBE
-	BLINK_RAINBOW           =  26, // FX_MODE_BLINK_RAINBOW
-	ANDROID                 =  27, // FX_MODE_ANDROID
-	CHASE_COLOR             =  28, // FX_MODE_CHASE_COLOR
-	CHASE_RANDOM            =  29, // FX_MODE_CHASE_RANDOM
-	CHASE_RAINBOW           =  30, // FX_MODE_CHASE_RAINBOW
-	CHASE_FLASH             =  31, // FX_MODE_CHASE_FLASH
-	CHASE_FLASH_RANDOM      =  32, // FX_MODE_CHASE_FLASH_RANDOM
-	CHASE_RAINBOW_WHITE     =  33, // FX_MODE_CHASE_RAINBOW_WHITE
-	COLORFUL                =  34, // FX_MODE_COLORFUL
-	TRAFFIC_LIGHT           =  35, // FX_MODE_TRAFFIC_LIGHT
-	COLOR_SWEEP_RANDOM      =  36, // FX_MODE_COLOR_SWEEP_RANDOM
-	RUNNING_COLOR           =  37, // FX_MODE_RUNNING_COLOR
-	RUNNING_RED_BLUE        =  38, // FX_MODE_RUNNING_RED_BLUE
-	RUNNING_RANDOM          =  39, // FX_MODE_RUNNING_RANDOM
-	LARSON_SCANNER          =  40, // FX_MODE_LARSON_SCANNER
-	COMET                   =  41, // FX_MODE_COMET
-	FIREWORKS               =  42, // FX_MODE_FIREWORKS
-	RAIN                    =  43, // FX_MODE_RAIN
-	MERRY_CHRISTMAS         =  44, // FX_MODE_MERRY_CHRISTMAS
-	FIRE_FLICKER            =  45, // FX_MODE_FIRE_FLICKER
-	GRADIENT                =  46, // FX_MODE_GRADIENT
-	LOADING                 =  47, // FX_MODE_LOADING
-	POLICE                  =  48, // FX_MODE_POLICE
-	POLICE_ALL              =  49, // FX_MODE_POLICE_ALL
-	TWO_DOTS                =  50, // FX_MODE_TWO_DOTS
-	TWO_AREAS               =  51, // FX_MODE_TWO_AREAS
-	CIRCUS_COMBUSTUS        =  52, // FX_MODE_CIRCUS_COMBUSTUS
-	HALLOWEEN               =  53, // FX_MODE_HALLOWEEN
-	TRICOLOR_CHASE          =  54, // FX_MODE_TRICOLOR_CHASE
-	TRICOLOR_WIPE           =  55, // FX_MODE_TRICOLOR_WIPE
-	TRICOLOR_FADE           =  56, // FX_MODE_TRICOLOR_FADE
-	LIGHTNING               =  57, // FX_MODE_LIGHTNING
-	ICU                     =  58, // FX_MODE_ICU
-	MULTI_COMET             =  59, // FX_MODE_MULTI_COMET
-	DUAL_LARSON_SCANNER     =  60, // FX_MODE_DUAL_LARSON_SCANNER
-	RANDOM_CHASE            =  61, // FX_MODE_RANDOM_CHASE
-	OSCILLATE               =  62, // FX_MODE_OSCILLATE
-	PRIDE_2015              =  63, // FX_MODE_PRIDE_2015
-	JUGGLE                  =  64, // FX_MODE_JUGGLE
-	PALETTE                 =  65, // FX_MODE_PALETTE
-	FIRE_2012               =  66, // FX_MODE_FIRE_2012
-	COLORWAVES              =  67, // FX_MODE_COLORWAVES
-	BPM                     =  68, // FX_MODE_BPM
-	FILLNOISE8              =  69, // FX_MODE_FILLNOISE8
-	NOISE16_1               =  70, // FX_MODE_NOISE16_1
-	NOISE16_2               =  71, // FX_MODE_NOISE16_2
-	NOISE16_3               =  72, // FX_MODE_NOISE16_3
-	NOISE16_4               =  73, // FX_MODE_NOISE16_4
-	COLORTWINKLE            =  74, // FX_MODE_COLORTWINKLE
-	LAKE                    =  75, // FX_MODE_LAKE
-	METEOR                  =  76, // FX_MODE_METEOR
-	METEOR_SMOOTH           =  77, // FX_MODE_METEOR_SMOOTH
-	RAILWAY                 =  78, // FX_MODE_RAILWAY
-	RIPPLE                  =  79, // FX_MODE_RIPPLE
-	TWINKLEFOX              =  80, // FX_MODE_TWINKLEFOX
-	TWINKLECAT              =  81, // FX_MODE_TWINKLECAT
-	HALLOWEEN_EYES          =  82, // FX_MODE_HALLOWEEN_EYES
-	STATIC_PATTERN          =  83, // FX_MODE_STATIC_PATTERN
-	TRI_STATIC_PATTERN      =  84, // FX_MODE_TRI_STATIC_PATTERN
-	SPOTS                   =  85, // FX_MODE_SPOTS
-	SPOTS_FADE              =  86, // FX_MODE_SPOTS_FADE
-	GLITTER                 =  87, // FX_MODE_GLITTER
-	CANDLE                  =  88, // FX_MODE_CANDLE
-	STARBURST               =  89, // FX_MODE_STARBURST
-	EXPLODING_FIREWORKS     =  90, // FX_MODE_EXPLODING_FIREWORKS
-	BOUNCINGBALLS           =  91, // FX_MODE_BOUNCINGBALLS
-	SINELON                 =  92, // FX_MODE_SINELON
-	SINELON_DUAL            =  93, // FX_MODE_SINELON_DUAL
-	SINELON_RAINBOW         =  94, // FX_MODE_SINELON_RAINBOW
-	POPCORN                 =  95, // FX_MODE_POPCORN
-	DRIP                    =  96, // FX_MODE_DRIP
-	PLASMA                  =  97, // FX_MODE_PLASMA
-	PERCENT                 =  98, // FX_MODE_PERCENT
-	RIPPLE_RAINBOW          =  99, // FX_MODE_RIPPLE_RAINBOW
-	HEARTBEAT               = 100, // FX_MODE_HEARTBEAT
-	PACIFICA                = 101, // FX_MODE_PACIFICA
-	CANDLE_MULTI            = 102, // FX_MODE_CANDLE_MULTI
-	SOLID_GLITTER           = 103, // FX_MODE_SOLID_GLITTER
-	SUNRISE                 = 104, // FX_MODE_SUNRISE
-	PHASED                  = 105, // FX_MODE_PHASED
-	TWINKLEUP               = 106, // FX_MODE_TWINKLEUP
-	NOISEPAL                = 107, // FX_MODE_NOISEPAL
-	SINEWAVE                = 108, // FX_MODE_SINEWAVE
-	PHASEDNOISE             = 109, // FX_MODE_PHASEDNOISE
-	FLOW                    = 110, // FX_MODE_FLOW
-	CHUNCHUN                = 111, // FX_MODE_CHUNCHUN
-	DANCING_SHADOWS         = 112, // FX_MODE_DANCING_SHADOWS
-	WASHING_MACHINE         = 113, // FX_MODE_WASHING_MACHINE
-	CANDY_CANE              = 114, // FX_MODE_CANDY_CANE
-	BLENDS                  = 115, // FX_MODE_BLENDS
+export enum WledEffectModeIndex {
+	STATIC                  =   0, // FX_MODE_STATIC                : "Solid"
+	BLINK                   =   1, // FX_MODE_BLINK                 : "Blink"
+	BREATH                  =   2, // FX_MODE_BREATH                : "Breathe"
+	COLOR_WIPE              =   3, // FX_MODE_COLOR_WIPE            : "Wipe"
+	COLOR_WIPE_RANDOM       =   4, // FX_MODE_COLOR_WIPE_RANDOM     : "Wipe Random"
+	RANDOM_COLOR            =   5, // FX_MODE_RANDOM_COLOR          : "Random Colors"
+	COLOR_SWEEP             =   6, // FX_MODE_COLOR_SWEEP           : "Sweep"
+	DYNAMIC                 =   7, // FX_MODE_DYNAMIC               : "Dynamic"
+	RAINBOW                 =   8, // FX_MODE_RAINBOW               : "Colorloop"
+	RAINBOW_CYCLE           =   9, // FX_MODE_RAINBOW_CYCLE         : "Rainbow"
+	SCAN                    =  10, // FX_MODE_SCAN                  : "Scan"
+	DUAL_SCAN               =  11, // FX_MODE_DUAL_SCAN             : "Scan Dual"
+	FADE                    =  12, // FX_MODE_FADE                  : "Fade"
+	THEATER_CHASE           =  13, // FX_MODE_THEATER_CHASE         : "Theater"
+	THEATER_CHASE_RAINBOW   =  14, // FX_MODE_THEATER_CHASE_RAINBOW : "Theater Rainbow"
+	RUNNING_LIGHTS          =  15, // FX_MODE_RUNNING_LIGHTS        : "Running"
+	SAW                     =  16, // FX_MODE_SAW                   : "Saw"
+	TWINKLE                 =  17, // FX_MODE_TWINKLE               : "Twinkle"
+	DISSOLVE                =  18, // FX_MODE_DISSOLVE              : "Dissolve"
+	DISSOLVE_RANDOM         =  19, // FX_MODE_DISSOLVE_RANDOM       : "Dissolve Rnd"
+	SPARKLE                 =  20, // FX_MODE_SPARKLE               : "Sparkle"
+	FLASH_SPARKLE           =  21, // FX_MODE_FLASH_SPARKLE         : "Sparkle Dark"
+	HYPER_SPARKLE           =  22, // FX_MODE_HYPER_SPARKLE         : "Sparkle+"
+	STROBE                  =  23, // FX_MODE_STROBE                : "Strobe"
+	STROBE_RAINBOW          =  24, // FX_MODE_STROBE_RAINBOW        : "Strobe Rainbow"
+	MULTI_STROBE            =  25, // FX_MODE_MULTI_STROBE          : "Strobe Mega"
+	BLINK_RAINBOW           =  26, // FX_MODE_BLINK_RAINBOW         : "Blink Rainbow"
+	ANDROID                 =  27, // FX_MODE_ANDROID               : "Android"
+	CHASE_COLOR             =  28, // FX_MODE_CHASE_COLOR           : "Chase"
+	CHASE_RANDOM            =  29, // FX_MODE_CHASE_RANDOM          : "Chase Random"
+	CHASE_RAINBOW           =  30, // FX_MODE_CHASE_RAINBOW         : "Chase Rainbow"
+	CHASE_FLASH             =  31, // FX_MODE_CHASE_FLASH           : "Chase Flash"
+	CHASE_FLASH_RANDOM      =  32, // FX_MODE_CHASE_FLASH_RANDOM    : "Chase Flash Rnd"
+	CHASE_RAINBOW_WHITE     =  33, // FX_MODE_CHASE_RAINBOW_WHITE   : "Rainbow Runner"
+	COLORFUL                =  34, // FX_MODE_COLORFUL              : "Colorful"
+	TRAFFIC_LIGHT           =  35, // FX_MODE_TRAFFIC_LIGHT         : "Traffic Light"
+	COLOR_SWEEP_RANDOM      =  36, // FX_MODE_COLOR_SWEEP_RANDOM    : "Sweep Random"
+	RUNNING_COLOR           =  37, // FX_MODE_RUNNING_COLOR         : "Running 2"
+	RUNNING_RED_BLUE        =  38, // FX_MODE_RUNNING_RED_BLUE      : "Red & Blue"
+	RUNNING_RANDOM          =  39, // FX_MODE_RUNNING_RANDOM        : "Stream"
+	LARSON_SCANNER          =  40, // FX_MODE_LARSON_SCANNER        : "Scanner"
+	COMET                   =  41, // FX_MODE_COMET                 : "Lighthouse"
+	FIREWORKS               =  42, // FX_MODE_FIREWORKS             : "Fireworks"
+	RAIN                    =  43, // FX_MODE_RAIN                  : "Rain"
+	MERRY_CHRISTMAS         =  44, // FX_MODE_MERRY_CHRISTMAS       : "Merry Christmas"
+	FIRE_FLICKER            =  45, // FX_MODE_FIRE_FLICKER          : "Fire Flicker"
+	GRADIENT                =  46, // FX_MODE_GRADIENT              : "Gradient"
+	LOADING                 =  47, // FX_MODE_LOADING               : "Loading"
+	POLICE                  =  48, // FX_MODE_POLICE                : "Police"
+	POLICE_ALL              =  49, // FX_MODE_POLICE_ALL            : "Police All"
+	TWO_DOTS                =  50, // FX_MODE_TWO_DOTS              : "Two Dots"
+	TWO_AREAS               =  51, // FX_MODE_TWO_AREAS             : "Two Areas"
+	CIRCUS_COMBUSTUS        =  52, // FX_MODE_CIRCUS_COMBUSTUS      : "Circus"
+	HALLOWEEN               =  53, // FX_MODE_HALLOWEEN             : "Halloween"
+	TRICOLOR_CHASE          =  54, // FX_MODE_TRICOLOR_CHASE        : "Tri Chase"
+	TRICOLOR_WIPE           =  55, // FX_MODE_TRICOLOR_WIPE         : "Tri Wipe"
+	TRICOLOR_FADE           =  56, // FX_MODE_TRICOLOR_FADE         : "Tri Fade"
+	LIGHTNING               =  57, // FX_MODE_LIGHTNING             : "Lightning"
+	ICU                     =  58, // FX_MODE_ICU                   : "ICU"
+	MULTI_COMET             =  59, // FX_MODE_MULTI_COMET           : "Multi Comet"
+	DUAL_LARSON_SCANNER     =  60, // FX_MODE_DUAL_LARSON_SCANNER   : "Scanner Dual"
+	RANDOM_CHASE            =  61, // FX_MODE_RANDOM_CHASE          : "Stream 2"
+	OSCILLATE               =  62, // FX_MODE_OSCILLATE             : "Oscillate"
+	PRIDE_2015              =  63, // FX_MODE_PRIDE_2015            : "Pride 2015"
+	JUGGLE                  =  64, // FX_MODE_JUGGLE                : "Juggle"
+	PALETTE                 =  65, // FX_MODE_PALETTE               : "Palette"
+	FIRE_2012               =  66, // FX_MODE_FIRE_2012             : "Fire 2012"
+	COLORWAVES              =  67, // FX_MODE_COLORWAVES            : "Colorwaves"
+	BPM                     =  68, // FX_MODE_BPM                   : "Bpm"
+	FILLNOISE8              =  69, // FX_MODE_FILLNOISE8            : "Fill Noise"
+	NOISE16_1               =  70, // FX_MODE_NOISE16_1             : "Noise 1"
+	NOISE16_2               =  71, // FX_MODE_NOISE16_2             : "Noise 2"
+	NOISE16_3               =  72, // FX_MODE_NOISE16_3             : "Noise 3"
+	NOISE16_4               =  73, // FX_MODE_NOISE16_4             : "Noise 4"
+	COLORTWINKLE            =  74, // FX_MODE_COLORTWINKLE          : "Colortwinkles"
+	LAKE                    =  75, // FX_MODE_LAKE                  : "Lake"
+	METEOR                  =  76, // FX_MODE_METEOR                : "Meteor"
+	METEOR_SMOOTH           =  77, // FX_MODE_METEOR_SMOOTH         : "Meteor Smooth"
+	RAILWAY                 =  78, // FX_MODE_RAILWAY               : "Railway"
+	RIPPLE                  =  79, // FX_MODE_RIPPLE                : "Ripple"
+	TWINKLEFOX              =  80, // FX_MODE_TWINKLEFOX            : "Twinklefox"
+	TWINKLECAT              =  81, // FX_MODE_TWINKLECAT            : "Twinklecat"
+	HALLOWEEN_EYES          =  82, // FX_MODE_HALLOWEEN_EYES        : "Halloween Eyes"
+	STATIC_PATTERN          =  83, // FX_MODE_STATIC_PATTERN        : "Solid Pattern"
+	TRI_STATIC_PATTERN      =  84, // FX_MODE_TRI_STATIC_PATTERN    : "Solid Pattern Tri"
+	SPOTS                   =  85, // FX_MODE_SPOTS                 : "Spots"
+	SPOTS_FADE              =  86, // FX_MODE_SPOTS_FADE            : "Spots Fade"
+	GLITTER                 =  87, // FX_MODE_GLITTER               : "Glitter"
+	CANDLE                  =  88, // FX_MODE_CANDLE                : "Candle"
+	STARBURST               =  89, // FX_MODE_STARBURST             : "Fireworks Starburst"
+	EXPLODING_FIREWORKS     =  90, // FX_MODE_EXPLODING_FIREWORKS   : "Fireworks 1D"
+	BOUNCINGBALLS           =  91, // FX_MODE_BOUNCINGBALLS         : "Bouncing Balls"
+	SINELON                 =  92, // FX_MODE_SINELON               : "Sinelon"
+	SINELON_DUAL            =  93, // FX_MODE_SINELON_DUAL          : "Sinelon Dual"
+	SINELON_RAINBOW         =  94, // FX_MODE_SINELON_RAINBOW       : "Sinelon Rainbow"
+	POPCORN                 =  95, // FX_MODE_POPCORN               : "Popcorn"
+	DRIP                    =  96, // FX_MODE_DRIP                  : "Drip"
+	PLASMA                  =  97, // FX_MODE_PLASMA                : "Plasma"
+	PERCENT                 =  98, // FX_MODE_PERCENT               : "Percent"
+	RIPPLE_RAINBOW          =  99, // FX_MODE_RIPPLE_RAINBOW        : "Ripple Rainbow"
+	HEARTBEAT               = 100, // FX_MODE_HEARTBEAT             : "Heartbeat"
+	PACIFICA                = 101, // FX_MODE_PACIFICA              : "Pacifica"
+	CANDLE_MULTI            = 102, // FX_MODE_CANDLE_MULTI          : "Candle Multi"
+	SOLID_GLITTER           = 103, // FX_MODE_SOLID_GLITTER         : "Solid Glitter"
+	SUNRISE                 = 104, // FX_MODE_SUNRISE               : "Sunrise"
+	PHASED                  = 105, // FX_MODE_PHASED                : "Phased"
+	TWINKLEUP               = 106, // FX_MODE_TWINKLEUP             : "Twinkleup"
+	NOISEPAL                = 107, // FX_MODE_NOISEPAL              : "Noise Pal"
+	SINEWAVE                = 108, // FX_MODE_SINEWAVE              : "Sine"
+	PHASEDNOISE             = 109, // FX_MODE_PHASEDNOISE           : "Phased Noise"
+	FLOW                    = 110, // FX_MODE_FLOW                  : "Flow"
+	CHUNCHUN                = 111, // FX_MODE_CHUNCHUN              : "Chunchun"
+	DANCING_SHADOWS         = 112, // FX_MODE_DANCING_SHADOWS       : "Dancing Shadows"
+	WASHING_MACHINE         = 113, // FX_MODE_WASHING_MACHINE       : "Washing Machine"
+	CANDY_CANE              = 114, // FX_MODE_CANDY_CANE            : "Candy Cane"
+	BLENDS                  = 115, // FX_MODE_BLENDS                : "Blends"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
