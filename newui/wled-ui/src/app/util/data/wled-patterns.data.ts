@@ -82,6 +82,11 @@ interface UiEffectModeInfo {
 	 * showcased.
 	 */
 	showcase?: boolean;
+
+	/**
+	 * Information about the author
+	 */
+	author?: string;
 }
 
 /**
@@ -1196,8 +1201,15 @@ export const effectModeInfoMap = buildInfoMap<
 			wledFxMethod: "mode_lake",
 			wledUiName: "Lake",
 
-			proposedName: "Lake",
-			description: "",
+			proposedName: "Lake Gradient",
+			description: "Effect reminiscent of a lake at night from a gradient",
+
+			speedInfo: true,
+			intensityInfo: false,
+
+			paletteInfo: "Gradient",
+
+			showcase: true
 		},
 
 		FX_MODE_METEOR:                  {
@@ -1206,321 +1218,647 @@ export const effectModeInfoMap = buildInfoMap<
 			wledUiName: "Meteor",
 
 			proposedName: "Meteor",
-			description: "",
+			description: "Sparkling band of color with a trail with colors from a gradient, moving from left to right over a black background",
+
+			speedInfo: true,
+			intensityInfo: "Trail Intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "This would be more interesting if the gradient were shifted over time",
 		},
+
 		FX_MODE_METEOR_SMOOTH:           {
 			wledIndex: WledEffectModeIndex.METEOR_SMOOTH,
 			wledFxMethod: "mode_meteor_smooth",
 			wledUiName: "Meteor Smooth",
 
-			proposedName: "Meteor Smooth",
-			description: "",
+			proposedName: "Meteor",
+			description: "Sparkling band of color with a trail with colors from a gradient, moving from left to right, without any gaps",
+
+			speedInfo: true,
+			intensityInfo: "Trail Intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "This would be more interesting if the gradient were shifted over time",
 		},
+
 		FX_MODE_RAILWAY:                 {
 			wledIndex: WledEffectModeIndex.RAILWAY,
 			wledFxMethod: "mode_railway",
 			wledUiName: "Railway",
 
 			proposedName: "Railway",
-			description: "",
-		},
-		FX_MODE_RIPPLE:                  {
-			wledIndex: WledEffectModeIndex.RIPPLE,
-			wledFxMethod: "mode_ripple",
-			wledUiName: "Ripple",
+			description: "Tight bands of color from a gradient that pulse",
 
-			proposedName: "Ripple",
-			description: "",
+			speedInfo: true,
+			intensityInfo: "Pulse Speed",
+
+			paletteInfo: "Gradient"
 		},
+
 		FX_MODE_TWINKLEFOX:              {
 			wledIndex: WledEffectModeIndex.TWINKLEFOX,
 			wledFxMethod: "mode_twinklefox",
 			wledUiName: "Twinklefox",
 
 			proposedName: "Twinklefox",
-			description: "",
+			description: "Twinkles of light chosen from a palette, similar to holiday lights.",
+
+			speedInfo: true,
+			intensityInfo: "Twinkle Count",
+
+			author: "Mark Kriegsman",
 		},
+
 		FX_MODE_TWINKLECAT:              {
 			wledIndex: WledEffectModeIndex.TWINKLECAT,
 			wledFxMethod: "mode_twinklecat",
 			wledUiName: "Twinklecat",
 
 			proposedName: "Twinklecat",
-			description: "",
+			description: "Twinkles of light chosen from a palette, similar to holiday lights, but not fading.",
+
+			speedInfo: true,
+			intensityInfo: "Twinkle Count",
+
+			author: "Mark Kriegsman",
 		},
+
 		FX_MODE_HALLOWEEN_EYES:          {
 			wledIndex: WledEffectModeIndex.HALLOWEEN_EYES,
 			wledFxMethod: "mode_halloween_eyes",
 			wledUiName: "Halloween Eyes",
 
 			proposedName: "Halloween Eyes",
-			description: "",
+			description: "Pairs of LEDs light up in colors randomly chosen from a gradient, then slowely fade out",
+
+			speedInfo: true,
+			intensityInfo: "Fade Speed",
+
+			paletteInfo: "Gradient",
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black",
+
+			author: "www.tweaking4all.com"
 		},
+
 		FX_MODE_STATIC_PATTERN:          {
 			wledIndex: WledEffectModeIndex.STATIC_PATTERN,
 			wledFxMethod: "mode_static_pattern",
 			wledUiName: "Solid Pattern",
 
 			proposedName: "Solid Pattern",
-			description: "",
+			description: "Displays a gradient with a portion of it replaced with a solid color",
+
+			speedInfo: false,
+			intensityInfo: "Replacement Portion?",
+
+			paletteInfo: "Gradient",
+			secondaryColorInfo: "Replacement Color",
+
+			devNotes: "This pattern doesn't seem to work well, or I don't understand it. Remove?"
 		},
+
 		FX_MODE_TRI_STATIC_PATTERN:      {
 			wledIndex: WledEffectModeIndex.TRI_STATIC_PATTERN,
 			wledFxMethod: "mode_tri_static_pattern",
 			wledUiName: "Solid Pattern Tri",
 
-			proposedName: "Solid Pattern Tri",
-			description: "",
+			proposedName: "Solid Bars",
+			description: "Solid Bars of static color",
+
+			speedInfo: false,
+			intensityInfo: "Bar Width",
+
+			primaryColorInfo: "Color 1",
+			secondaryColorInfo: "Color 2",
+			tertiaryColorInfo: "Color 3",
 		},
+
 		FX_MODE_SPOTS:                   {
 			wledIndex: WledEffectModeIndex.SPOTS,
 			wledFxMethod: "mode_spots",
 			wledUiName: "Spots",
 
-			proposedName: "Spots",
-			description: "",
+			proposedName: "Spots: Static",
+			description: "Small unchanging smooth bands of a gradient show over a solid background",
+
+			speedInfo: false,
+			intensityInfo: "Band Count / Inverse Size",
+
+			paletteInfo: "Gradient",
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black."
 		},
+
 		FX_MODE_SPOTS_FADE:              {
 			wledIndex: WledEffectModeIndex.SPOTS_FADE,
 			wledFxMethod: "mode_spots_fade",
 			wledUiName: "Spots Fade",
 
-			proposedName: "Spots Fade",
-			description: "",
+			proposedName: "Spots: Pulsing",
+			description: "Small pulsing smooth bands of a gradient show over a solid background",
+
+			speedInfo: false,
+			intensityInfo: "Band Count / Inverse Size",
+
+			paletteInfo: "Gradient",
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black."
 		},
+
 		FX_MODE_GLITTER:                 {
 			wledIndex: WledEffectModeIndex.GLITTER,
 			wledFxMethod: "mode_glitter",
 			wledUiName: "Glitter",
 
-			proposedName: "Glitter",
-			description: "",
+			proposedName: "Gradient with Glitter",
+			description: "Slowly moving gradient with white sparkles randomly shown",
+
+			speedInfo: true,
+			intensityInfo: "Glitter Frequency",
+
+			paletteInfo: "Gradient"
 		},
+
 		FX_MODE_CANDLE:                  {
 			wledIndex: WledEffectModeIndex.CANDLE,
 			wledFxMethod: "mode_candle",
 			wledUiName: "Candle",
 
 			proposedName: "Candle",
-			description: "",
+			description: "All LEDs pulse in a manner reminiscent of a candle, over a solid or gradient background",
+
+			speedInfo: true,
+			intensityInfo: "Pulse Speed",
+
+			primaryColorInfo: "Background Color",
+			paletteInfo: "Background Gradient",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Pulse Color",
+
+			devNotes: "This probably needs good defaults to look right.",
+			showcase: true,
 		},
+
 		FX_MODE_STARBURST:               {
 			wledIndex: WledEffectModeIndex.STARBURST,
 			wledFxMethod: "mode_starburst",
 			wledUiName: "Fireworks Starburst",
 
-			proposedName: "Fireworks Starburst",
-			description: "",
+			proposedName: "Fireworks: Many Bursts",
+			description: "White dots that burst like fireworks with color chosen from a gradient, over a solid background",
+
+			speedInfo: true,
+			intensityInfo: "Number of Fireworks",
+
+			paletteInfo: "Burst Gradient",
+			secondaryColorInfo: "Background Color",
+
+			showcase: true,
+			devNotes: "Secondary Color should probably default to black"
 		},
+
 		FX_MODE_EXPLODING_FIREWORKS:     {
 			wledIndex: WledEffectModeIndex.EXPLODING_FIREWORKS,
 			wledFxMethod: "mode_exploding_fireworks",
 			wledUiName: "Fireworks 1D",
 
-			proposedName: "Fireworks 1D",
-			description: "",
+			proposedName: "Fireworks: Launched",
+			description: "A single white dot moves in a parabola and then explodes into a color shower from a gradient",
+
+			speedInfo: true,
+			intensityInfo: "Small values launch from left, large from right",
+
+			paletteInfo: "Burst Gradient",
 
 			showcase: true
 		},
+
 		FX_MODE_BOUNCINGBALLS:           {
 			wledIndex: WledEffectModeIndex.BOUNCINGBALLS,
 			wledFxMethod: "mode_bouncing_balls",
 			wledUiName: "Bouncing Balls",
 
 			proposedName: "Bouncing Balls",
-			description: "",
+			description: "Several Single-Pixel Balls on a black background",
+
+			speedInfo: true,
+			intensityInfo: "Number of Balls",
+
+			paletteInfo: "Ball Color Gradient",
 		},
+
 		FX_MODE_SINELON:                 {
 			wledIndex: WledEffectModeIndex.SINELON,
 			wledFxMethod: "mode_sinelon",
 			wledUiName: "Sinelon",
 
 			proposedName: "Sinelon",
-			description: "",
+			description: "Chasing bar of gradient over a fading background",
+
+			speedInfo: true,
+			intensityInfo: "Background intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "Secondary Color should probably default to black"
 		},
+
 		FX_MODE_SINELON_DUAL:            {
 			wledIndex: WledEffectModeIndex.SINELON_DUAL,
 			wledFxMethod: "mode_sinelon_dual",
-			wledUiName: "Sinelon Dual",
+			wledUiName: "Sinelon: Dual",
 
-			proposedName: "Sinelon Dual",
-			description: "",
+			proposedName: "Sinelon: Dual",
+			description: "Two chasing bars of gradient over a fading background",
+
+			speedInfo: true,
+			intensityInfo: "Background intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "Secondary Color should probably default to black"
 		},
 		FX_MODE_SINELON_RAINBOW:         {
 			wledIndex: WledEffectModeIndex.SINELON_RAINBOW,
 			wledFxMethod: "mode_sinelon_rainbow",
 			wledUiName: "Sinelon Rainbow",
 
-			proposedName: "Sinelon Rainbow",
-			description: "",
+			proposedName: "Sinelon: Striped",
+			description: "Two chasing bars of gradient stripes over a fading background",
+
+			speedInfo: true,
+			intensityInfo: "Background intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "Secondary Color should probably default to black"
 		},
+
 		FX_MODE_POPCORN:                 {
 			wledIndex: WledEffectModeIndex.POPCORN,
 			wledFxMethod: "mode_popcorn",
 			wledUiName: "Popcorn",
 
-			proposedName: "Popcorn",
-			description: "",
+			proposedName: "Balls",
+			description: "Single pixel 'balls' bouncing in a parabola randomly chosen from a gradient",
+
+			speedInfo: true,
+			intensityInfo: "Number of balls",
+
+			paletteInfo: "Ball Gradient"
 		},
+
 		FX_MODE_DRIP:                    {
 			wledIndex: WledEffectModeIndex.DRIP,
 			wledFxMethod: "mode_drip",
 			wledUiName: "Drip",
 
 			proposedName: "Drip",
-			description: "",
+			description: "Drips of a solid color falling from right to left and bouncing a bit",
+
+			speedInfo: true,
+			intensityInfo: "Drip Count",
+
+			primaryColorInfo: "Drip Color",
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary Color should probably default to black"
 		},
+
 		FX_MODE_PLASMA:                  {
 			wledIndex: WledEffectModeIndex.PLASMA,
 			wledFxMethod: "mode_plasma",
 			wledUiName: "Plasma",
 
 			proposedName: "Plasma",
-			description: "",
+			description: "Plasma or water like pattern from a gradient morphing",
+
+			speedInfo: true,
+			intensityInfo: "Plasma Brightness",
+
+			paletteInfo: "Gradient",
+
+			showcase: true,
 		},
+
 		FX_MODE_PERCENT:                 {
 			wledIndex: WledEffectModeIndex.PERCENT,
 			wledFxMethod: "mode_percent",
 			wledUiName: "Percent",
 
 			proposedName: "Percent",
-			description: "",
+			description: "Displays a solid color or gradient on X % of the LEDs, controlled by intensity. Values from 0-99 show from the left, 100-200 from the right.",
+
+			speedInfo: false,
+			intensityInfo: "Percentage to display.",
+
+			paletteInfo: "Active Gradient",
+			primaryColorInfo: "Active Color",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Background/Inactive Color",
 		},
+
+
+		FX_MODE_RIPPLE:                  {
+			wledIndex: WledEffectModeIndex.RIPPLE,
+			wledFxMethod: "mode_ripple",
+			wledUiName: "Ripple",
+
+			proposedName: "Ripple: Solid BG",
+			description: "Random expanding ripples chosen from a gradient appearing and dispersing over a solid background",
+
+			speedInfo: true,
+			intensityInfo: "Ripple Count",
+
+			paletteInfo: "Gradient",
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black"
+		},
+
 		FX_MODE_RIPPLE_RAINBOW:          {
 			wledIndex: WledEffectModeIndex.RIPPLE_RAINBOW,
 			wledFxMethod: "mode_ripple_rainbow",
 			wledUiName: "Ripple Rainbow",
 
-			proposedName: "Ripple Rainbow",
-			description: "",
+			proposedName: "Ripple: Gradient BG",
+			description: "Random expanding ripples chosen from a gradient appearing and dispersing over a dim background from the same gradient",
+
+			speedInfo: true,
+			intensityInfo: "Ripple Count",
+
+			paletteInfo: "Gradient",
 		},
+
 		FX_MODE_HEARTBEAT:               {
 			wledIndex: WledEffectModeIndex.HEARTBEAT,
 			wledFxMethod: "mode_heartbeat",
 			wledUiName: "Heartbeat",
 
 			proposedName: "Heartbeat",
-			description: "",
+			description: "All LEDs beat similar to a heartbeat, over a solid or gradient background",
+
+			primaryColorInfo: "Background Color",
+			paletteInfo: "Background Gradient",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Beat Color",
+
+			devNotes: "Primary color should probably default to black"
 		},
+
 		FX_MODE_PACIFICA:                {
 			wledIndex: WledEffectModeIndex.PACIFICA,
 			wledFxMethod: "mode_pacifica",
 			wledUiName: "Pacifica",
 
 			proposedName: "Pacifica",
-			description: "",
+			description: "Paralax layers of color waves chosen from a gradient",
+
+			speedInfo: true,
+			intensityInfo: "Wave Angle Velocity",
+
+			paletteInfo: "Gradient",
+
+			showcase: true,
 		},
+
 		FX_MODE_CANDLE_MULTI:            {
 			wledIndex: WledEffectModeIndex.CANDLE_MULTI,
 			wledFxMethod: "mode_candle_multi",
 			wledUiName: "Candle Multi",
 
-			proposedName: "Candle Multi",
-			description: "",
+			proposedName: "Candle: Multi Flicker",
+			description: "Gradient or solid color with many flickering dark spots that simulate a candle",
+
+			speedInfo: true,
+			intensityInfo: "Flicker Intensity",
+
+			paletteInfo: "Background Gradient",
+			primaryColorInfo: "Background Color",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Overlay / Flicker Color",
+
+			devNotes: "Secondary color should probably default to black"
 		},
+
 		FX_MODE_SOLID_GLITTER:           {
 			wledIndex: WledEffectModeIndex.SOLID_GLITTER,
 			wledFxMethod: "mode_solid_glitter",
 			wledUiName: "Solid Glitter",
 
 			proposedName: "Solid Glitter",
-			description: "",
+			description: "White dots randomly appearing over a solid background",
+
+			speedInfo: true,
+			intensityInfo: "Amount of Glitter",
+
+			primaryColorInfo: "Background Color"
 		},
+
 		FX_MODE_SUNRISE:                 {
 			wledIndex: WledEffectModeIndex.SUNRISE,
 			wledFxMethod: "mode_sunrise",
 			wledUiName: "Sunrise",
 
 			proposedName: "Sunrise",
-			description: "",
-		},
-		FX_MODE_PHASED:                  {
-			wledIndex: WledEffectModeIndex.PHASED,
-			wledFxMethod: "mode_phased",
-			wledUiName: "Phased",
+			description: "Displays a mirrored portion of a gradient shifting like a sunrise. Speed 0: static sun; Speed 1 - 60: Sunrise time in minutes; speed 60 - 120 : Sunset time in minutes - 60; Speed above 120: \"breathing\" rise and set",
 
-			proposedName: "Phased",
-			description: "",
+			speedInfo: "Speed of Sunrise/Sunset",
+			intensityInfo: "Wave Intensity",
+
+			paletteInfo: "Gradient",
+
+			devNotes: "I think should be showcased if it had more reasonable speed settings... measuring speed in minutes is _slow_."
 		},
+
 		FX_MODE_TWINKLEUP:               {
 			wledIndex: WledEffectModeIndex.TWINKLEUP,
 			wledFxMethod: "mode_twinkleup",
 			wledUiName: "Twinkleup",
 
 			proposedName: "Twinkleup",
-			description: "",
+			description: "Twinkling bands, picked at a random from a gradient or a solid color, over a solid background.",
+
+			speedInfo: true,
+			intensityInfo: "Number of Twinkles",
+
+			primaryColorInfo: "Twinkle Color",
+			paletteInfo: "Twinkle Gradient",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Background Color",
+			devNotes: "Secondary color should probably default to black..."
 		},
+
 		FX_MODE_NOISEPAL:                {
 			wledIndex: WledEffectModeIndex.NOISEPAL,
 			wledFxMethod: "mode_noisepal",
 			wledUiName: "Noise Pal",
 
 			proposedName: "Noise Pal",
-			description: "",
+			description: "Slow banded noise from a gradient",
+
+			speedInfo: true,
+			intensityInfo: "Noise Zoom",
+
+			paletteInfo: "Gradient",
+
+			showcase: true,
 		},
+
 		FX_MODE_SINEWAVE:                {
 			wledIndex: WledEffectModeIndex.SINEWAVE,
 			wledFxMethod: "mode_sinewave",
 			wledUiName: "Sine",
 
-			proposedName: "Sine",
-			description: "",
+			proposedName: "Chasing Bands",
+			description: "Chasing solid color bands over a gradient or solid color",
+
+			speedInfo: true,
+			intensityInfo: "Number of Bands",
+
+			primaryColorInfo: "Background Color",
+			paletteInfo: "Background Gradient",
+			defaultPaletteUsesColor: "primary",
+
+			secondaryColorInfo: "Band Color",
 		},
+
+		FX_MODE_PHASED:                  {
+			wledIndex: WledEffectModeIndex.PHASED,
+			wledFxMethod: "mode_phased",
+			wledUiName: "Phased",
+
+			proposedName: "Phased",
+			description: "(Uncertain) Repeating wave-like patterns from a gradient over a solid background",
+
+			speedInfo: true,
+			intensityInfo: true,
+
+			paletteInfo: "Wave Gradient",
+			defaultPaletteUsesColor: "primary",
+			primaryColorInfo: "Wave Color",
+
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black... I'm not at all certain about this description."
+		},
+
 		FX_MODE_PHASEDNOISE:             {
 			wledIndex: WledEffectModeIndex.PHASEDNOISE,
 			wledFxMethod: "mode_phased_noise",
 			wledUiName: "Phased Noise",
 
 			proposedName: "Phased Noise",
-			description: "",
+			description: "(Uncertain) Repeating noisy wave-like patterns from a gradient over a solid background",
+
+			speedInfo: true,
+			intensityInfo: true,
+
+			paletteInfo: "Wave Gradient",
+			defaultPaletteUsesColor: "primary",
+			primaryColorInfo: "Wave Color",
+
+			secondaryColorInfo: "Background Color",
+
+			devNotes: "Secondary color should probably default to black... I'm not at all certain about this description.",
+
+			showcase: true
 		},
+
 		FX_MODE_FLOW:                    {
 			wledIndex: WledEffectModeIndex.FLOW,
 			wledFxMethod: "mode_flow",
 			wledUiName: "Flow",
 
-			proposedName: "Flow",
-			description: "",
+			proposedName: "Gradient: Many",
+			description: "Many copies of a cycling gradient",
+
+			speedInfo: true,
+			intensityInfo: "Gradient Count",
+
+			paletteInfo: "Gradient"
 		},
+
 		FX_MODE_CHUNCHUN:                {
 			wledIndex: WledEffectModeIndex.CHUNCHUN,
 			wledFxMethod: "mode_chunchun",
 			wledUiName: "Chunchun",
 
-			proposedName: "Chunchun",
-			description: "",
+			proposedName: "Gradient: Particle Wave",
+			description: "Moving band of gradient made from many small particles over a solid background",
+
+			speedInfo: true,
+			intensityInfo: "Particle Closeness",
+
+			paletteInfo: "Gradient",
+
+			secondaryColorInfo: "Background Color",
+
+			showcase: true
 		},
+
 		FX_MODE_DANCING_SHADOWS:         {
 			wledIndex: WledEffectModeIndex.DANCING_SHADOWS,
 			wledFxMethod: "mode_dancing_shadows",
 			wledUiName: "Dancing Shadows",
 
-			proposedName: "Dancing Shadows",
-			description: "",
+			proposedName: "Spotlights",
+			description: "Many moving 'spotlights' of color chosen from a gradient. Shine this through tree branches/leaves or other close-up objects that cast interesting shadows onto a ceiling or tarp. ",
+
+			speedInfo: true,
+			intensityInfo: "Number of Spotlights",
+
+			paletteInfo: "Gradient",
+
+			showcase: true,
 		},
+
 		FX_MODE_WASHING_MACHINE:         {
 			wledIndex: WledEffectModeIndex.WASHING_MACHINE,
 			wledFxMethod: "mode_washing_machine",
 			wledUiName: "Washing Machine",
 
 			proposedName: "Washing Machine",
-			description: "",
+			description: "Waves of a gradient moving in one direction, pausing, then going back",
+
+			speedInfo: true,
+			intensityInfo: "Number of Waves",
+
+			paletteInfo: "Gradient",
 		},
+
 		FX_MODE_CANDY_CANE:              {
 			wledIndex: WledEffectModeIndex.CANDY_CANE,
 			wledFxMethod: "mode_candy_cane",
 			wledUiName: "Candy Cane",
 
 			proposedName: "Candy Cane",
-			description: "",
+			description: "Not sure, not enabled in WLED UI...",
+
+			devNotes: "Update this once UI supports this pattern"
 		},
+
 		FX_MODE_BLENDS:                  {
 			wledIndex: WledEffectModeIndex.BLENDS,
 			wledFxMethod: "mode_blends",
 			wledUiName: "Blends",
 
 			proposedName: "Blends",
-			description: "",
+			description: "Not sure, not enabled in WLED UI...",
+
+			devNotes: "Update this once UI supports this pattern"
 		},
 	}
 )
