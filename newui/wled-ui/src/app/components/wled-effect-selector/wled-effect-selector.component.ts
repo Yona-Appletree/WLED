@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild } from "@angular/core";
 import { effectModeInfoMap, WledEffectModeInfo } from "../../util/data/wled-patterns.data";
-import { WledDropdownComponent } from "../wled-dropdown/wled-dropdown.component";
+import { WledPopupComponent } from "../wled-popup/wled-popup.component";
 
 @Component({
 	selector: 'wled-effect-selector',
@@ -11,7 +11,7 @@ export class WledEffectSelectorComponent {
 	_selectedEffect: WledEffectModeInfo | null = null;
 
 	@ViewChild("dropdown")
-	dropdown!: WledDropdownComponent;
+	dropdown!: WledPopupComponent;
 
 	@Input()
 	set selectedEffect(value: WledEffectModeInfo | null | undefined) {

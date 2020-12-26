@@ -17,7 +17,7 @@
 	     (click)="dropdown.updatePopup($event)"
 	></div>
 
-	<wled-dropdown #dropdown
+	<wled-popup #dropdown
 	               class="x-dropdown"
 	               [closeOnInsideClick]="false"
 	>
@@ -31,5 +31,5 @@
 			     (click)="useColor(preset);"
 			></div>
 		</div>
-	</wled-dropdown>
+	</wled-popup>
 </ng-template>

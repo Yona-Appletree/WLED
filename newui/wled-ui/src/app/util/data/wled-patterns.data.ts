@@ -126,6 +126,8 @@ export const effectModeInfoMap = buildInfoMap<
 			speedInfo: true,
 			intensityInfo: true,
 			primaryColorInfo: "Color 1",
+			defaultPaletteUsesColor: "primary",
+
 			secondaryColorInfo: "Color 2",
 			tertiaryColorInfo: false,
 			paletteInfo: false,

@@ -1,18 +1,19 @@
 import { Component, ElementRef, Input, OnDestroy } from "@angular/core";
 import type { StrictModifiers } from '@popperjs/core';
-import { createPopper, Instance, Placement } from '@popperjs/core';
+import { createPopper, Instance, Placement, preventOverflow } from '@popperjs/core';
+import { animationFramePromise } from "../../util/promise.util";
 
 
 @Component({
-	selector: 'wled-dropdown',
-	templateUrl: './wled-dropdown.component.html',
-	styleUrls: [ "./wled-dropdown.component.scss" ],
+	selector: 'wled-popup',
+	templateUrl: './wled-popup.component.html',
+	styleUrls: [ "./wled-popup.component.scss" ],
 	host: {
 		"[style.display]": "popupOpen ? '' : 'none'",
 		"(window:click)": "handleWindowClick($event)"
 	}
 })
-export class WledDropdownComponent implements OnDestroy {
+export class WledPopupComponent implements OnDestroy {
 	private popper: Instance | null = null;
 
 	@Input()
@@ -31,6 +32,12 @@ export class WledDropdownComponent implements OnDestroy {
 	useTriggerWidth = true;
 
 	popupOpen = false;
+
+	/**
+	 * Holds the position of the document scroll prior to opening the popup when not using popper (mobile full-screen)
+	 * so it can be restored on close.
+	 */
+	preOpenScrollTop?: number;
 
 	constructor(
 		public elemRef: ElementRef<HTMLElement>
@@ -64,6 +71,15 @@ export class WledDropdownComponent implements OnDestroy {
 			this.popupOpen = false;
 			this.popper?.destroy();
 			this.popper = null;
+
+			if (this.preOpenScrollTop !== undefined) {
+				const scrollTop = this.preOpenScrollTop;
+				this.preOpenScrollTop = undefined;
+
+				animationFramePromise().then(
+					() => window.scrollTo({ top: scrollTop })
+				);
+			}
 			return;
 		}
 
@@ -77,16 +93,23 @@ export class WledDropdownComponent implements OnDestroy {
 			this.elemRef.nativeElement.style.width = "";
 		}
 
+		this.popupOpen = true;
+		this.lastOpenedAtMs = Date.now();
+
 		this.popper = createPopper<StrictModifiers>(
 			this.popupTrigger,
 			this.elemRef.nativeElement,
 			{
-				placement: "bottom-start"
+				placement: "bottom-start",
+				modifiers: [
+					{
+						name: 'preventOverflow',
+					},
+				]
 			}
 		);
 
-		this.popupOpen = true;
-		this.lastOpenedAtMs = Date.now();
+		this.preOpenScrollTop = window.scrollY;
 	}
 
 	closePopup() {

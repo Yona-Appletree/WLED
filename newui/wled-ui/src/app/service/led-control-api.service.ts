@@ -66,7 +66,7 @@ export class LedControlApiService {
 
     this.lastRequestSentAt = Date.now();
 
-    this.currentRequestPromise = fetch(
+    const doRequest = () => fetch(
       this.config.serviceRoot + path,
       {
         method: method,
@@ -82,7 +82,20 @@ export class LedControlApiService {
 
         this.lastResponseReceivedAt = Date.now();
         this.currentRequestPromise = null;
-      });
+      })
+    ;
+
+    this.currentRequestPromise = (async () => {
+      for (let i=0; i<3; i++) {
+        try {
+          await doRequest();
+          return;
+        } catch (e) {
+          console.error("Server request failed, retrying...", e);
+          await timeoutPromise(500);
+        }
+      }
+    })();
 
     await this.currentRequestPromise;
 
@@ -625,7 +638,7 @@ export class UiWledEffectInfo {
 
   @Cached()
   get paletteInfo() {
-    if (! this.apiModel.paletteInfo) {
+    if (! this.apiModel.paletteInfo || this.apiModel.defaultPaletteUsesColor) {
       return null;
     }
 

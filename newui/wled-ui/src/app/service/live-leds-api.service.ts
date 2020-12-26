@@ -22,7 +22,7 @@ export class LiveLedsApiService {
 
     if (enable) {
       if (this.livePreviewTimeout === null) {
-        this.livePreviewTimeout = setTimeout(() => this.update(), 40);
+        this.livePreviewTimeout = setTimeout(() => this.update(), 100);
       }
     } else {
       if (this.livePreviewTimeout !== null) {
@@ -113,14 +113,17 @@ export class LiveLedsApiService {
       .then(it => it as WledApiLiveResponse)
       .then(response => {
         this.lastResponse = response;
+
+        // Clear out the cached image
+        this.updateImages(response);
+      })
+      .finally(() => {
         this.livePreviewTimeout = setTimeout(
           () => this.update(),
           40
         );
-
-        // Clear out the cached image
-        this.updateImages(response);
-      });
+      })
+    ;
   }
 }
 
