@@ -1,0 +1,19 @@
+<div class="x-selectedEffect"
+     (click)="dropdown.updatePopup($event)"
+>
+	<div class="x-selectedEffect-x-name">
+		{{ selectedEffect?.proposedName || "Select Effect..." }}
+	</div>
+</div>
+
+<wled-dropdown class="x-effectList"
+               #dropdown
+>
+	<div *ngFor="let effectInfo of effectModeInfoMap.values"
+	     class="x-effectList-x-effect"
+	     [class.x-effectList-x-effect-is-selected]="selectedEffect === effectInfo"
+	     (click)="selectEffect(effectInfo)"
+	>
+		{{ effectInfo.proposedName }}
+	</div>
+</wled-dropdown>

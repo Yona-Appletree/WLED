@@ -12,9 +12,72 @@
 
 <div>
 	<div style="margin: auto; background: rgba(0,0,0,.65); width: 400px;">
-		<div *ngFor="let segment of wledApi.currentStatus?.segments; trackBy: segmentIdFor"
+		<div *ngFor="let segment of wledApi.currentStatus?.segments; trackBy: trackByIndex"
 		     style="display: grid; grid-template-columns: 1fr; grid-row-gap: 8px; justify-content: center;"
 		>
+			<wled-effect-selector [selectedEffect]="segment.effectInfo?.apiModel"
+			                      (effectSelected)="segment.selectEffect($event)"
+			></wled-effect-selector>
+
+			<ng-container *ngIf="segment.effectInfo; let effectInfo">
+				<div>
+					{{ effectInfo?.description }}
+				</div>
+
+				<div *ngIf="effectInfo?.speedLabel">
+					<h4 class="heading-4">{{ effectInfo?.speedLabel }}</h4>
+					<input type="range"
+					       [min]="0"
+					       [max]="255"
+					       [step]="1"
+					       [value]="segment.effectSpeed"
+					       (input)="segment.updateEffectSpeed(speedInput.value)"
+					       #speedInput
+					       style="width: 100%;"
+					/>
+				</div>
+
+				<div *ngIf="effectInfo?.intensityLabel">
+					<h4 class="heading-4">{{ effectInfo?.intensityLabel }}</h4>
+					<input type="range"
+					       [min]="0"
+					       [max]="255"
+					       [step]="1"
+					       [value]="segment.effectIntensity"
+					       (input)="segment.updateEffectIntensity(intensityInput.value)"
+					       #intensityInput
+					       style="width: 100%;"
+					/>
+				</div>
+
+				<div *ngFor="let colorInfo of effectInfo?.colorInfos; trackBy: trackByIndex">
+					<h4 class="heading-4">{{ colorInfo.label }}</h4>
+
+					<wled-color-picker [color]="colorInfo.currentColor"
+					                   (colorChange)="colorInfo.updateColor($event)"
+					></wled-color-picker>
+
+					<wled-palette-picker [segment]="segment"
+					                     [selectedPalette]="segment.selectedPalette"
+					                     (selectedPaletteChange)="segment.selectPalette($event)"
+					                     [allowCustomPalettes]="false"
+					                     *ngIf="colorInfo.isPaletteDefault"
+					></wled-palette-picker>
+				</div>
+
+
+				<div *ngIf="effectInfo?.paletteInfo; let paletteInfo">
+					<h4 class="heading-4">{{ paletteInfo.label }}</h4>
+
+					<wled-palette-picker [segment]="segment"
+					                     [allowCustomPalettes]="paletteInfo.allowCustomColors"
+					                     [selectedPalette]="segment.selectedPalette"
+					                     (selectedPaletteChange)="segment.selectPalette($event)"
+					></wled-palette-picker>
+				</div>
+			</ng-container>
+
+			<!--
 			<div style="align-self: stretch;"
 			     [style.background]="segment.selectedPalette.cssGradient"
 			>
@@ -57,6 +120,7 @@
 				                     (selectedPaletteChange)="segment.selectPalette($event)"
 				></wled-palette-picker>
 			</ng-container>
+			-->
 		</div>
 	</div>
 </div>

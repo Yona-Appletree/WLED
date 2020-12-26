@@ -1,17 +1,33 @@
-<div class="palGroups">
+<div class="x-currentPalette x-palette"
+     [style.background]="selectedPalette?.cssGradient"
+     (click)="dropdown.updatePopup($event)"
+>
+	{{ selectedPalette?.name }}
+</div>
+
+<div *ngIf="selectedPalette?.pickerColors">
+	<wled-palette-editor [colors]="selectedPalette?.pickerColors"
+	                     (paletteChange)="segment?.updateManualPaletteColors($event.wledColors)"
+	></wled-palette-editor>
+</div>
+
+<wled-dropdown #dropdown
+               class="x-palGroups"
+               placement="bottom"
+>
 	<div *ngFor="let palGroup of paletteGroups; trackBy: groupIdFor"
 	     style="padding-bottom: 32px"
-	     class="palGroups-x-group"
+	     class="x-palGroups-x-group"
 	>
-		<h4 class="palGroups-x-group-x-name">{{ palGroup.name }}</h4>
+		<h4 class="x-palGroups-x-group-x-name">{{ palGroup.name }}</h4>
 
 		<div *ngFor="let pal of palGroup.palettes; let index=index; trackBy: palIdFor"
 		     [style.background]="pal.cssGradient"
 		     (click)="selectPalette(pal)"
-		     class="palGroups-x-group-x-pal"
-		     [class.palGroups-x-group-x-pal-is-selected]="selectedPalette == pal"
+		     class="x-palette"
+		     [class.x-palette-is-selected]="selectedPalette == pal"
 		>
 			{{ pal.name }}
 		</div>
 	</div>
-</div>
+</wled-dropdown>

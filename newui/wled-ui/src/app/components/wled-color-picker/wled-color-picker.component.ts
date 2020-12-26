@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output } from "@angular/core";
+import {
+	AfterViewInit,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnDestroy,
+	OnInit,
+	Output,
+	ViewChild
+} from "@angular/core";
 
 import iro from '@jaames/iro';
 import { UiColor, UiColorCompatible } from "../../util/ui-color";
@@ -11,20 +21,42 @@ import { UiColor, UiColorCompatible } from "../../util/ui-color";
 export class WledColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 	private colorPicker: iro.ColorPicker| null = null;
 
+	presetColors = [
+		"#000000",
+		"#ffffff",
+
+		"#ff0000",
+		"#ffff00",
+		"#00ff00",
+		"#00ffff",
+		"#0000ff",
+		"#ff00ff",
+
+		"#ffa000",
+		"#ffc800",
+		"#ffe0a0",
+	].map(it => UiColor.from(it)?.cssColor);
+
+	@ViewChild("pickerContainer")
+	pickerContainer!: ElementRef<HTMLElement>;
+
 	@Input()
 	defaultColor = "#000";
 
 	@Input()
-	debounce = true;
+	debounce = false;
+
+	@Input()
+	displayInline = false;
 
 	private _color: string = this.defaultColor;
 
 	@Input()
-	set color(color: string) {
-		this._color = color;
+	set color(color: UiColorCompatible | null) {
+		this._color = UiColor.from(color)?.cssColor || this.defaultColor;
 
 		if (this.colorPicker) {
-			this.colorPicker.setColors([ color ]);
+			this.colorPicker.setColors([ this._color ]);
 		}
 	}
 
@@ -33,15 +65,13 @@ export class WledColorPickerComponent implements OnInit, AfterViewInit, OnDestro
 	}
 
 	@Output()
-	colorChange = new EventEmitter<string>();
+	colorChange = new EventEmitter<UiColor>();
 
-	constructor(
-		private elemRef: ElementRef<HTMLElement>
-	) {}
+	constructor() {}
 
 	ngAfterViewInit(): void {
 		this.colorPicker = iro.ColorPicker(
-			this.elemRef.nativeElement,
+			this.pickerContainer.nativeElement,
 
 			{
 				// Set the size of the color picker
@@ -87,7 +117,7 @@ export class WledColorPickerComponent implements OnInit, AfterViewInit, OnDestro
 
 		this._debounceTimeout = setTimeout(
 			() => {
-				this.colorChange.emit(this.color);
+				this.colorChange.emit(UiColor.from(this.color || this.defaultColor) !);
 				this._debounceTimeout = null;
 			},
 			this._debounceMs

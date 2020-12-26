@@ -3,6 +3,7 @@ import { LedControlApiService, UiStripSegment } from "./service/led-control-api.
 import { LiveLedsApiService } from "./service/live-leds-api.service";
 
 import ResizeObserver from "resize-observer-polyfill";
+import { effectModeInfoMap } from "./util/data/wled-patterns.data";
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
   resizeObserver = new ResizeObserver(() => this.handleResize());
 
+  effectInfos = effectModeInfoMap;
+
   constructor(
     public wledApi: LedControlApiService,
     public liveApi: LiveLedsApiService
@@ -26,8 +29,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     this.liveApi.livePreviewEnabled = true;
   }
 
-  segmentIdFor(index: number, seg: UiStripSegment) {
-    return seg.segmentId + "";
+  trackByIndex(index: number) {
+    return index + "";
   }
 
   handleResize() {

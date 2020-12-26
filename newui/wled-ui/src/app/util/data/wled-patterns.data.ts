@@ -4,7 +4,7 @@
 import { buildInfoMap } from "../info-map.util";
 import { WledEffectModeIndex } from "../wled.api";
 
-interface UiEffectModeInfo {
+export interface WledEffectModeInfo {
 	/**
 	 * WLED Mode Index
 	 */
@@ -38,39 +38,39 @@ interface UiEffectModeInfo {
 	/**
 	 * Indicates if the "speed" option is used by this mode, and optionally, the label to use.
 	 */
-	speedInfo?: UOptionInfo;
+	speedInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates if the "intensity" option is used by this mode, and optionally, the label to use.
 	 */
-	intensityInfo?: UOptionInfo;
+	intensityInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates if the primaryColor option is used by this mode, and optionally, the label to use.
 	 */
-	primaryColorInfo?: UOptionInfo;
+	primaryColorInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates if the secondaryColor option is used by this mode, and optionally, the label to use.
 	 */
-	secondaryColorInfo?: UOptionInfo;
+	secondaryColorInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates if the tertiaryColor option is used by this mode, and optionally, the label to use.
 	 */
-	tertiaryColorInfo?: UOptionInfo;
+	tertiaryColorInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates if the palette option is used by this mode, and optionally, the label to use.
 	 */
-	paletteInfo?: UOptionInfo;
+	paletteInfo?: WledEffectOptionInfo;
 
 	/**
 	 * Indicates which color is used when the palette is set to "default" (0). Some patterns
 	 * support using either a solid color or a gradient for one of their colors. They are not
 	 * consistent as to which slot is used this way.
 	 */
-	defaultPaletteUsesColor?: "primary" | "secondary" | "tertiary";
+	defaultPaletteUsesColor?: WledEffectColorName;
 
 	/**
 	 * Notes by Hypher while auditing this mode
@@ -92,12 +92,12 @@ interface UiEffectModeInfo {
 /**
  * Information about how one of the color slots is used by an effect.
  */
-type UOptionInfo = string | boolean;
+export type WledEffectOptionInfo = string | boolean;
 
 export const effectModeInfoMap = buildInfoMap<
 	"effectId",
 	UiEffectModeId,
-	UiEffectModeInfo
+	WledEffectModeInfo
 >(
 	"effectId",
 	{
@@ -350,14 +350,14 @@ export const effectModeInfoMap = buildInfoMap<
 			wledFxMethod: "mode_running_lights",
 			wledUiName: "Running",
 			proposedName: "Gradient: Smooth Stripes",
-			description: "Smooth Stripes of a gradient moving over a background",
+			description: "Smooth Stripes of solid foreground moving over a gradient background",
 
 
 			speedInfo: true,
-			intensityInfo: "Gradient Stripe Width (Inverse)",
+			intensityInfo: "Number of Stripes",
 
-			paletteInfo: "Gradient",
-			secondaryColorInfo: "Background Color",
+			paletteInfo: "Background Gradient",
+			secondaryColorInfo: "Foreground Color",
 		},
 
 		FX_MODE_SAW:                     {
@@ -1863,7 +1863,9 @@ export const effectModeInfoMap = buildInfoMap<
 	}
 )
 
-type UiEffectModeId = 
+export type WledEffectColorName = "primary" | "secondary" | "tertiary";
+
+export type UiEffectModeId =
 		"FX_MODE_STATIC"
 	| "FX_MODE_BLINK"
 	| "FX_MODE_BREATH"

@@ -13,7 +13,7 @@ export class WledPaletteEditorComponent {
 	palette: UiPalette = new UiPalette([]);
 
 	@Input()
-	set colors(colors: Array<UiColorCompatible | null>) {
+	set colors(colors: Array<UiColorCompatible | null | undefined> | null | undefined) {
 		this.palette = UiPalette.fromColors(colors, UiColor.WHITE);
 		this.selectedIndex = Math.min(this.palette.stops.length - 1, this.selectedIndex);
 	}
@@ -25,22 +25,6 @@ export class WledPaletteEditorComponent {
 	enabled = true;
 
 	selectedIndex = 0;
-
-	presetColors = [
-		"#000000",
-		"#ffffff",
-
-		"#ff0000",
-		"#ffff00",
-		"#00ff00",
-		"#00ffff",
-		"#0000ff",
-		"#ff00ff",
-
-		"#ffa000",
-		"#ffc800",
-		"#ffe0a0",
-	].map(it => UiColor.from(it));
 
 	updateSelectedColor(
 		newColor: UiColorCompatible | null | undefined

@@ -1,0 +1,35 @@
+<ng-container *ngIf="displayInline; else popupStyle">
+	<div #pickerContainer></div>
+
+	<div class="x-presets">
+		<div *ngFor="let preset of presetColors; let index=index"
+		     [style.background]="preset"
+		     class="x-presets-x-preset"
+		     [class.x-presets-x-preset-is-selected]="preset == color"
+		     (click)="useColor(preset);"
+		></div>
+	</div>
+</ng-container>
+
+<ng-template #popupStyle>
+	<div class="x-currentColor"
+	     [style.background]="color"
+	     (click)="dropdown.updatePopup($event)"
+	></div>
+
+	<wled-dropdown #dropdown
+	               class="x-dropdown"
+	               [closeOnInsideClick]="false"
+	>
+		<div #pickerContainer></div>
+
+		<div class="x-presets">
+			<div *ngFor="let preset of presetColors; let index=index"
+			     [style.background]="preset"
+			     class="x-presets-x-preset"
+			     [class.x-presets-x-preset-is-selected]="preset == color"
+			     (click)="useColor(preset);"
+			></div>
+		</div>
+	</wled-dropdown>
+</ng-template>

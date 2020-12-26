@@ -18,7 +18,7 @@ export class UiPalette {
 	}
 
 	@Cached()
-	get wledColors() {
+	get wledColors(): WLedRgbColor[] {
 		return this.stops.map(it => it.color.wledColor)
 	}
 

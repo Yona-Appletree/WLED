@@ -1,0 +1,39 @@
+.x-currentColor {
+  border: 1px solid var(--color-light1);
+  min-width: 96px;
+  min-height: 32px;
+
+  cursor: pointer;
+}
+
+.x-dropdown {
+  background: var(--color-dark1);
+  min-width: 320px;
+}
+
+.x-presets {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .x-presets-x-preset {
+    background-color: rgb(255, 0, 0);
+    border-radius: 100px;
+    transition-duration: 0.15s;
+
+    margin: 5px;
+
+    box-sizing: content-box;
+
+    width: 24px;
+    height: 24px;
+
+    cursor: pointer;
+    border: 2px solid #555;
+
+    &.x-presets-x-preset-is-selected {
+      border: 2px solid #FFF;
+    }
+  }
+}

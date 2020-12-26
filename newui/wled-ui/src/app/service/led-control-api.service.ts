@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from "rxjs";
 import { asSequence } from "sequency";
 import { Cached } from "../util/cached.decorator";
 import {
@@ -9,9 +10,10 @@ import {
   PartyColors_p, RainbowColors_p, RainbowStripeColors_p
 } from "../util/data/fastled-palettes.data";
 import { wledGradientPaletteNames, wledGradientPalettes } from "../util/data/wled-gradient-palettes.data";
+import { effectModeInfoMap, WledEffectModeInfo, WledEffectOptionInfo } from "../util/data/wled-patterns.data";
 import { Dictionary } from "../util/dictionary.util";
 import { buildInfoMap } from "../util/info-map.util";
-import { uint8 } from "../util/number.util";
+import { uint8, uint8FromFrac } from "../util/number.util";
 import { timeoutPromise } from "../util/promise.util";
 import { ConfigService } from "./config.service";
 import {
@@ -72,7 +74,7 @@ export class LedControlApiService {
       })
       .then(it => it.json())
       .then(it => it as Partial<WledApiFullResponse>)
-      .then(it => {
+      .then(async it => {
         this._currentResponse = {
           ... this._currentResponse,
           ... it,
@@ -83,9 +85,6 @@ export class LedControlApiService {
       });
 
     await this.currentRequestPromise;
-
-    // Wait a little longer so we don't slam the server with requests. It likes to crash.
-    await timeoutPromise(100);
 
     return this._currentResponse;
   }
@@ -132,23 +131,57 @@ export class LedControlApiService {
     );
   }
 
+
+  private segmentUpdateMap: Dictionary<{
+    updatePromise?: Promise<unknown>,
+    nextUpdate?: Partial<WLedApiSegmentDefinition>
+  }> = {};
+
+  private ensureSegmentUpdate(
+    segmentId: number
+  ) {
+    if (! this.segmentUpdateMap[segmentId + ""]) {
+      this.segmentUpdateMap[segmentId + ""] = {}
+    }
+
+    return this.segmentUpdateMap[segmentId + ""];
+  }
+
   async updateSegment(
     segmentId: number,
     segment: Partial<WLedApiSegmentDefinition>
   ) {
-    return this.sendJsonRequest(
-      "POST",
-      "/json/si",
-      {
-        "seg": {
-          ... segment,
-          id: segmentId
-        },
-        "v":true
-      }
-    );
+    const updateInfo = this.ensureSegmentUpdate(segmentId);
+
+    if (updateInfo.nextUpdate) {
+      updateInfo.nextUpdate = {
+        ... updateInfo?.nextUpdate,
+        ... segment
+      };
+    } else {
+      updateInfo.nextUpdate = segment;
+
+      await updateInfo.updatePromise;
+
+      const update = updateInfo.nextUpdate;
+      updateInfo.nextUpdate = undefined;
+
+      updateInfo.updatePromise = this.sendJsonRequest(
+        "POST",
+        "/json/si",
+        {
+          "seg": {
+            ... update,
+            id: segmentId
+          },
+          "v":true
+        }
+      ).finally(() => { updateInfo.updatePromise = undefined })
+    }
   }
 }
+
+
 
 /**
  * Wrapper for overall WLED status. Used to provide a friendly API for the UI controls.
@@ -222,8 +255,25 @@ export class UiStripSegment implements IUiStripSegment {
   // WS2812FX::Segment::options & SEG_OPTION_SELECTED
   get isSelected() { return this.apiModel.sel; }
 
-  // Emulates void WS2812FX::handle_palette(void)
+  @Cached()
+  get effectInfo() {
+    const info = effectModeInfoMap.values.find(it => it.wledIndex === this.effectIndex);
+    return info && new UiWledEffectInfo(this, info) || null;
+  }
 
+  updateEffectSpeed(value: number | string) {
+    this.update({
+      effectSpeed: uint8(value)
+    });
+  }
+
+  updateEffectIntensity(value: number | string) {
+    this.update({
+      effectIntensity: uint8(value)
+    });
+  }
+
+  // Emulates void WS2812FX::handle_palette(void)
   @Cached()
   get paletteGroups() {
     const nonZeroPalettes = [
@@ -236,7 +286,7 @@ export class UiStripSegment implements IUiStripSegment {
       // 2: {//primary color only
       new UiWledPalette(
         2,
-        "One Color",
+        "One Custom Color",
         UiPalette.fromColors([ this.manualPaletteColors[0] ]),
         this.manualPaletteColors.slice(0, 1).map(it => UiColor.from(it))
       ),
@@ -244,7 +294,7 @@ export class UiStripSegment implements IUiStripSegment {
       // 3: {//primary + secondary
       new UiWledPalette(
         3,
-        "Two Colors",
+        "Two Custom Colors",
         UiPalette.fromColors([ this.manualPaletteColors[0], this.manualPaletteColors[1] ]),
         this.manualPaletteColors.slice(0, 2).map(it => UiColor.from(it))
       ),
@@ -252,7 +302,7 @@ export class UiStripSegment implements IUiStripSegment {
       // 4: {//primary + secondary + tertiary
       new UiWledPalette(
         4,
-        "Three Colors",
+        "Three Custom Colors",
         UiPalette.fromColors([ this.manualPaletteColors[0], this.manualPaletteColors[1], this.manualPaletteColors[2] ]),
         this.manualPaletteColors.map(it => UiColor.from(it))
       ),
@@ -260,7 +310,7 @@ export class UiStripSegment implements IUiStripSegment {
       // 5: {//primary + secondary (+tert if not off), more distinct
       new UiWledPalette(
         5,
-        "Distinct", (()=>{
+        "Distinct Custom Colors", (()=>{
           const prim = this.manualPaletteColors[0];
           const sec  = this.manualPaletteColors[1];
           const ter  = this.manualPaletteColors[2];
@@ -316,7 +366,7 @@ export class UiStripSegment implements IUiStripSegment {
         case WledEffectModeIndex.GLITTER    : return nonZeroPalettes[11]; // rainbow colors
         case WledEffectModeIndex.SUNRISE    : return nonZeroPalettes[35]; // heat palette
         case WledEffectModeIndex.FLOW       : return nonZeroPalettes[ 6]; // party
-        default                        : return nonZeroPalettes[14];
+        default                             : return nonZeroPalettes[14];
       }
     })();
 
@@ -421,22 +471,22 @@ export class UiStripSegment implements IUiStripSegment {
     this.apiService.updateSegment(
       this.segmentId,
       {
-        col: updates.manualPaletteColors,
-        id: updates.segmentId,
-        start: updates.startLedIndex,
-        stop: updates.endLedIndex,
-        fx: updates.effectIndex,
-        sx: updates.effectSpeed,
-        ix: updates.effectIntensity,
-        pal: updates.paletteIndex,
-        grp: updates.groupIndex,
-        spc: updates.spacing,
-        bri: updates.brightness,
-        len: updates.ledCount,
-        on: updates.isActive,
-        mi: updates.isMirrored,
-        rev: updates.isReversed,
-        sel: updates.isSelected,
+        col: updates.manualPaletteColors ?? this.manualPaletteColors,
+        id: updates.segmentId ?? this.segmentId,
+        start: updates.startLedIndex ?? this.startLedIndex,
+        stop: updates.endLedIndex ?? this.endLedIndex,
+        fx: updates.effectIndex ?? this.effectIndex,
+        sx: updates.effectSpeed ?? this.effectSpeed,
+        ix: updates.effectIntensity ?? this.effectIntensity,
+        pal: updates.paletteIndex ?? this.paletteIndex,
+        grp: updates.groupIndex ?? this.groupIndex,
+        spc: updates.spacing ?? this.spacing,
+        bri: updates.brightness ?? this.brightness,
+        len: updates.ledCount ?? this.ledCount,
+        on: updates.isActive ?? this.isActive,
+        mi: updates.isMirrored ?? this.isMirrored,
+        rev: updates.isReversed ?? this.isReversed,
+        sel: updates.isSelected ?? this.isSelected,
       }
     )
   }
@@ -457,8 +507,8 @@ export class UiStripSegment implements IUiStripSegment {
     }
   }
 
-  updateManualPaletteColors(colors: UiColorCompatible[]) {
-    this.update({
+  updateManualPaletteColors(colors: Array<UiColorCompatible | null | undefined>) {
+    return this.update({
       manualPaletteColors: colors.map(it => UiColor.from(it)?.wledColor || [ 0, 0, 0 ])
     })
   }
@@ -481,6 +531,22 @@ export class UiStripSegment implements IUiStripSegment {
     )
   }
 
+  selectEffect(effectInfo: WledEffectModeInfo) {
+    this.update({
+      effectIndex: effectInfo.wledIndex
+    })
+  }
+
+  updateManualColor(
+    colorIndex: 0 | 1 | 2,
+    color: UiColorCompatible | null
+  ) {
+    return this.updateManualPaletteColors([
+      ... this.manualPaletteColors.slice(0, colorIndex),
+      UiColor.from(color)?.wledColor || [],
+      ... this.manualPaletteColors.slice(colorIndex + 1),
+    ]);
+  }
 }
 
 export type UiWledPaletteGroupId = "dynamic" | "userDefined" | "fastLed" | "gradient";
@@ -490,6 +556,142 @@ export interface UiWledPaletteGroupInfo {
   name: string;
   palettes: UiWledPalette[];
   customizable: boolean;
+}
+
+export class UiWledEffectInfo {
+  constructor(
+    public segmentInfo: UiStripSegment,
+    public apiModel: WledEffectModeInfo
+  ) {}
+
+  get wledIndex() { return this.apiModel.wledIndex }
+  get effectId() { return this.apiModel.effectId }
+  get wledFxMethod() { return this.apiModel.wledFxMethod }
+  get wledUiName() { return this.apiModel.wledUiName }
+  get proposedName() { return this.apiModel.proposedName }
+  get description() { return this.apiModel.description }
+
+  get devNotes() { return this.apiModel.devNotes }
+  get showcase() { return this.apiModel.showcase }
+  get author() { return this.apiModel.author }
+
+  get speedLabel() {
+    const info = this.apiModel.speedInfo;
+    if (info) {
+      return info === true ? "Speed" : info;
+    } else {
+      return false;
+    }
+  }
+
+  get intensityLabel() {
+    const info = this.apiModel.intensityInfo;
+    if (info) {
+      return info === true ? "Intensity" : info
+    } else {
+      return false;
+    }
+  }
+
+  @Cached()
+  get primaryColorInfo() {
+    return this.apiModel.primaryColorInfo
+      ? new UiWledEffectColorInfo(this.segmentInfo, this, "primary")
+      : null;
+  }
+
+  @Cached()
+  get secondaryColorInfo() {
+    return this.apiModel.secondaryColorInfo
+      ? new UiWledEffectColorInfo(this.segmentInfo, this, "secondary")
+      : null;
+  }
+
+  @Cached()
+  get tertiaryColorInfo() {
+    return this.apiModel.tertiaryColorInfo
+      ? new UiWledEffectColorInfo(this.segmentInfo, this, "tertiary")
+      : null;
+  }
+
+  @Cached()
+  get colorInfos(): UiWledEffectColorInfo[] {
+    return asSequence([
+      this.primaryColorInfo,
+      this.secondaryColorInfo,
+      this.tertiaryColorInfo,
+    ]).filterNotNull().toArray()
+  }
+
+  @Cached()
+  get paletteInfo() {
+    if (! this.apiModel.paletteInfo) {
+      return null;
+    }
+
+    return {
+      label: this.apiModel.paletteInfo === true
+             ? "Palette"
+             : this.apiModel.paletteInfo,
+
+      // Custom color selection is only allowed when only the palette is used. Otherwise the custom colors would
+      // be used twice -- once in the palette and once as a color, causing undesired effects.
+      allowCustomColors: this.colorInfos.length === 0
+    }
+  }
+}
+
+export class UiWledEffectColorInfo {
+  constructor(
+    public segmentInfo: UiStripSegment,
+    public effectInfo: UiWledEffectInfo,
+    public colorName: "primary" | "secondary" | "tertiary"
+  ) {}
+
+  get label(): string | null {
+    let info;
+
+    if (this.colorName == "primary") info = this.effectInfo.apiModel.primaryColorInfo;
+    else if (this.colorName == "secondary") info = this.effectInfo.apiModel.secondaryColorInfo;
+    else if (this.colorName == "tertiary") info = this.effectInfo.apiModel.tertiaryColorInfo;
+
+    if (! info) return null;
+
+    if (info === true) {
+      if (this.colorName == "primary") return "Primary Color";
+      else if (this.colorName == "secondary") return "Secondary Color";
+      else if (this.colorName == "tertiary") return "Tertiary Color";
+      else return "Unknown Color"
+    } else {
+      return info;
+    }
+  }
+
+  get colorIndex(): 0 | 1 | 2 {
+    if (this.colorName == "primary") return 0;
+    else if (this.colorName == "secondary") return 1;
+    else if (this.colorName == "tertiary") return 2;
+    else throw new Error("Invalid color: " + this.colorName);
+  }
+
+  /**
+   * If true, this color is used when the default palette is selected, and this color should show a palette selector.
+   */
+  get isPaletteDefault() {
+    return this.effectInfo.apiModel.defaultPaletteUsesColor === this.colorName;
+  }
+
+  @Cached()
+  get currentColor(): UiColor | null {
+    return UiColor.from(this.segmentInfo.manualPaletteColors[this.colorIndex]);
+  }
+
+  updateColor(newColor: UiColorCompatible | null) {
+    this.segmentInfo.updateManualColor(
+      this.colorIndex,
+      newColor
+    );
+  }
 }
 
 export class UiWledPalette {
